@@ -1,0 +1,9 @@
+#This is an example, modify it !
+
+User-agent: Googlebot
+Disallow: /nogooglebot/
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.example.com/sitemap
