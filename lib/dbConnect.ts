@@ -9,7 +9,6 @@ if (!process.env.MONGODB_URI) {
 }
 
 const MONGODB_URI: string = process.env.MONGODB_URI
-console.log('mongo', MONGODB_URI)
 
 /**
  * Global is used here to maintain a cached connection across hot reloads

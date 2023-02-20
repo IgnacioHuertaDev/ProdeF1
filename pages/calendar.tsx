@@ -94,7 +94,7 @@ const Calendar = () => {
     }
     if (carreraProxima.length != 0) {
       data.push({
-        title: 'Carrera proxima',
+        title: 'Proxima carrera ',
         icon: 'gps' as const,
         raceName: carreraProxima[0].raceName,
         date: carreraProxima[0].date,

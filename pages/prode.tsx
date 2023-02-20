@@ -6,6 +6,7 @@ import {
   Skeleton,
   Title,
 } from '@mantine/core'
+import ProdeForm from 'components/dashboard/ProdeForm'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import useGetSchedule from 'hooks/useGetSchedule'
@@ -60,8 +61,9 @@ const Prode = () => {
       >
         <div>
           <Title order={1} mb={15}>
-            Prode
+            Predicciones
           </Title>
+          <ProdeForm />
         </div>
       </Box>
     </>

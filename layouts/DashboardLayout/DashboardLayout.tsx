@@ -28,8 +28,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null
 
-  console.log(session)
-
   // If no session exists, display access denied message
   if (!session) {
     router.push('/auth')

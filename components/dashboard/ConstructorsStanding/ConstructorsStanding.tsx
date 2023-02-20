@@ -7,7 +7,7 @@ import { ConstructorStanding } from 'interfaces/constructorStanding'
 import { useSession } from 'next-auth/react'
 
 const ConstructorsStanding = () => {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const loading = status === 'loading'
 
   const { constructorStandings, isLoading, isError, isLoadingSlow } =

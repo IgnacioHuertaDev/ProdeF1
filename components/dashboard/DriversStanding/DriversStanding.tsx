@@ -7,7 +7,7 @@ import { DriverStanding } from 'interfaces/driversStanding'
 import { useSession } from 'next-auth/react'
 
 const DriversStanding = () => {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const loading = status === 'loading'
 
   const { driversStanding, isLoading, isError, isLoadingSlow } =
