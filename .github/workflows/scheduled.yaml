@@ -8,7 +8,7 @@ jobs:
   cron:
     runs-on: ubuntu-latest
     steps:
-      - name: hourly-cron-job
+      - name: update-after-race-results
         run: |
           curl --request POST \
           --url 'https://prodef1.vercel.app/api/cronJob' \
