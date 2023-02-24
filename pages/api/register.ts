@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import dbConnect from 'lib/dbConnect'
 import User from 'models/User'
+import { UserPredictions } from 'models/UserPredictions'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 interface ResponseData {
@@ -27,9 +28,14 @@ const validateForm = async (
 
   await dbConnect()
   const emailUser = await User.findOne({ email: email })
+  const userName = await User.findOne({ name: username })
 
   if (emailUser) {
     return { error: 'Este email ya esta registrado' }
+  }
+
+  if (userName) {
+    return { error: 'Este nombre de usuario ya esta registrado' }
   }
 
   if (password.length < 6) {
@@ -72,6 +78,22 @@ export default async function handler(
     .save()
     .then(() =>
       res.status(200).json({ msg: 'Successfuly created new User: ' + newUser })
+    )
+    .catch((err: string) =>
+      res.status(400).json({ error: "Error on '/api/register': " + err })
+    )
+
+  // When users registers we generate prediction schema
+  const newUserPredictions = new UserPredictions({
+    usuario: username,
+  })
+
+  newUserPredictions
+    .save()
+    .then(() =>
+      res.status(200).json({
+        msg: 'Successfuly created new UserPredictions: ' + newUserPredictions,
+      })
     )
     .catch((err: string) =>
       res.status(400).json({ error: "Error on '/api/register': " + err })

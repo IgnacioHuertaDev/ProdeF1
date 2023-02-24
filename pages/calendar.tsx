@@ -11,13 +11,18 @@ import RaceInfo from 'components/dashboard/RaceInfo'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs from 'dayjs'
+import 'dayjs/locale/es'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import useGetSchedule from 'hooks/useGetSchedule'
 import { Race } from 'interfaces/schedule'
 import DashboardLayout from 'layouts/DashboardLayout'
 import { useSession } from 'next-auth/react'
 import { ReactElement } from 'react'
+import capitalizeFirstLetter from 'utils/capitalizeFirstLetter'
 
 const Calendar = () => {
+  dayjs.extend(customParseFormat)
+  dayjs.locale('es')
   const { status } = useSession()
   const loading = status === 'loading'
 
@@ -69,6 +74,7 @@ const Calendar = () => {
     icon: 'gps'
     raceName: string
     date: string
+    time: string
   }[] = []
 
   if (races) {
@@ -76,8 +82,11 @@ const Calendar = () => {
       <tr key={element.raceName}>
         <td>{element.raceName}</td>
         <td>{element.Circuit.circuitName}</td>
-        <td>{element.date}</td>
-        <td>{element.time}</td>
+        <td>{`${capitalizeFirstLetter(
+          dayjs(`${element.date}/${element.time}`).format(
+            `dddd, D [de] MMMM, YYYY - h:mm A`
+          )
+        )}`}</td>
       </tr>
     ))
 
@@ -90,6 +99,7 @@ const Calendar = () => {
         icon: 'gps' as const,
         raceName: carreraAnterior[0].raceName,
         date: carreraAnterior[0].date,
+        time: carreraAnterior[0].time,
       })
     }
     if (carreraProxima.length != 0) {
@@ -98,6 +108,7 @@ const Calendar = () => {
         icon: 'gps' as const,
         raceName: carreraProxima[0].raceName,
         date: carreraProxima[0].date,
+        time: carreraProxima[0].time,
       })
     }
   }
@@ -120,7 +131,6 @@ const Calendar = () => {
                 <th>Carrera</th>
                 <th>Nombre del circuito</th>
                 <th>Fecha</th>
-                <th>Hora</th>
               </tr>
             </thead>
             <tbody>

@@ -5,6 +5,7 @@ import {
   createStyles,
   keyframes,
   LoadingOverlay,
+  MantineProvider,
   PasswordInput,
   Stack,
   TextInput,
@@ -127,7 +128,7 @@ const Authentication = () => {
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Email invalido'),
       password: (val) =>
-        val.length <= 6
+        val.length <= 5
           ? 'La contraseña debe tener al menos 6 caracteres'
           : null,
     },
@@ -179,76 +180,98 @@ const Authentication = () => {
   }
 
   return (
-    <AuthFormProvider form={authForm}>
-      <div className={classes.container}>
-        <FormContainer backgroundColor={theme.colors.mainBrand[6]}>
-          <ImageContainer>
-            <Image
-              src={BrandLogo}
-              alt="Auth Image"
-              layout="responsive"
-              priority
-            />
-          </ImageContainer>
-          <Title align="center" color={theme.colors.nonwhite[0]} order={1}>
-            Prode F1
-          </Title>
-          <Stack>
-            {type === 'registrarse' && (
-              <TextInput
-                label="Nombre"
-                placeholder="Tu nombre"
-                {...authForm.getInputProps('name')}
+    <MantineProvider
+      theme={{
+        components: {
+          InputWrapper: {
+            styles: (theme) => ({
+              input: {
+                backgroundColor: theme.white,
+                border: theme.colors.gray[6],
+                color: theme.colors.dark[9],
+              },
+              label: {
+                color: theme.white,
+              },
+              error: {
+                color: theme.white,
+              },
+            }),
+          },
+        },
+      }}
+    >
+      <AuthFormProvider form={authForm}>
+        <div className={classes.container}>
+          <FormContainer backgroundColor={theme.colors.mainBrand[6]}>
+            <ImageContainer>
+              <Image
+                src={BrandLogo}
+                alt="Auth Image"
+                layout="responsive"
+                priority
               />
-            )}
-
-            <TextInput
-              required
-              label="Email"
-              placeholder="tuemail@gmail.com"
-              {...authForm.getInputProps('email')}
-            />
-
-            <PasswordInput
-              required
-              label="Contraseña"
-              placeholder="Tu contraseña"
-              {...authForm.getInputProps('password')}
-            />
-          </Stack>
-          <Stack mb="md" mt="md">
-            <Anchor
-              component="button"
-              type="button"
-              color="nonwhite.0"
-              onClick={() => toggle()}
-              size="xs"
-            >
-              {type === 'registrarse'
-                ? 'Ya tenes cuenta? Entra'
-                : 'No tenes una cuenta? Registrate'}
-            </Anchor>
-            <Button
-              variant="white"
-              type="submit"
-              onClick={() => {
+            </ImageContainer>
+            <Title align="center" color={theme.colors.nonwhite[0]} order={1}>
+              Prode F1
+            </Title>
+            <form
+              onSubmit={authForm.onSubmit(() =>
                 type === 'registrarse' ? registerUser() : loginUser()
-              }}
+              )}
             >
-              {upperFirst(type)}
-            </Button>
-          </Stack>
-          <LoadingOverlay
-            visible={loadingRequest}
-            loader={
-              <LoaderContainer>
-                <Loader color={theme.colors.mainBrand[6]} />
-              </LoaderContainer>
-            }
-          />
-        </FormContainer>
-      </div>
-    </AuthFormProvider>
+              <Stack>
+                {type === 'registrarse' && (
+                  <TextInput
+                    label="Nombre"
+                    placeholder="Tu nombre"
+                    {...authForm.getInputProps('name')}
+                  />
+                )}
+
+                <TextInput
+                  required
+                  label="Email"
+                  placeholder="tuemail@gmail.com"
+                  {...authForm.getInputProps('email')}
+                />
+
+                <PasswordInput
+                  required
+                  label="Contraseña"
+                  placeholder="Tu contraseña"
+                  {...authForm.getInputProps('password')}
+                />
+              </Stack>
+              <Stack mb="md" mt="md">
+                <Anchor
+                  component="button"
+                  type="button"
+                  color="gray.0"
+                  onClick={() => toggle()}
+                  size="xs"
+                >
+                  {type === 'registrarse'
+                    ? 'Ya tenes cuenta? Entra'
+                    : 'No tenes una cuenta? Registrate'}
+                </Anchor>
+                <Button variant="default" type="submit">
+                  {upperFirst(type)}
+                </Button>
+              </Stack>
+            </form>
+            <LoadingOverlay
+              visible={loadingRequest}
+              loader={
+                <LoaderContainer>
+                  <Loader color={theme.colors.mainBrand[6]} />
+                </LoaderContainer>
+              }
+            />
+          </FormContainer>
+        </div>
+      </AuthFormProvider>
+    </MantineProvider>
   )
 }
 

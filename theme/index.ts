@@ -48,21 +48,6 @@ const theme: MantineThemeOverride = {
         },
       }),
     },
-    Input: {
-      styles: (theme) => ({
-        input: {
-          backgroundColor: theme.white,
-          border: theme.colors.gray[6],
-          color: theme.colors.dark[9],
-        },
-        label: {
-          color: theme.colors.gray[0],
-        },
-        error: {
-          color: theme.white,
-        },
-      }),
-    },
     Modal: {
       styles: (theme) => ({
         modal: {

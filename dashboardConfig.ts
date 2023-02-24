@@ -1,6 +1,6 @@
 const dashboardConfig = {
-  //La Meridional
-  currentYear: new Date().getFullYear(),
+  //currentYear: new Date().getFullYear(),
+  currentYear: 2023,
 }
 
 export default dashboardConfig

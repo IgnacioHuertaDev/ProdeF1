@@ -47,7 +47,7 @@
 const withTranslate = require('next-translate')
 
 module.exports = withTranslate({
-  reactStrictMode: true,
+  reactStrictMode: false,
   swcMinify: true,
   poweredByHeader: false,
 })
