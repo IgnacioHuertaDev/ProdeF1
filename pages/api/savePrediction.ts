@@ -1,3 +1,4 @@
+import dashboardConfig from 'dashboardConfig'
 import { UserPrediccions } from 'interfaces/userPredictions'
 import dbConnect from 'lib/dbConnect'
 import { UserPredictions } from 'models/UserPredictions'
@@ -48,9 +49,11 @@ export default async function handler(
 
   const errorMessage = await validatePrediction(topDrivers, dropouts)
 
+  const idCarrera = `${raceId}${dashboardConfig.currentYear}`
+
   // create or update a Prediction on MongoDB
   const newPrediction = {
-    idCarrera: raceId,
+    idCarrera: idCarrera,
     puntaje: 0,
     pilotosTop: topDrivers,
     pilotosAbandono: dropouts.map((piloto: string) => piloto),
@@ -66,7 +69,7 @@ export default async function handler(
     if (userPredictions) {
       // buscar la predicción con el idCarrera especificado
       const existingPredictionIndex = userPredictions.predictions.findIndex(
-        (pred) => pred.idCarrera === raceId
+        (pred) => pred.idCarrera === idCarrera
       )
 
       if (existingPredictionIndex >= 0) {

@@ -13,8 +13,11 @@ import axios from 'axios'
 import DropoutsDriversPicker from 'components/dashboard/DropoutsDriversPicker'
 import TopDriversPicker from 'components/dashboard/TopDriversPicker'
 import ErrorMessage from 'components/shared/ErrorMessage'
+import dashboardConfig from 'dashboardConfig'
 import useGetDrivers from 'hooks/useGetDrivers'
+import getProdeByRaceAndYear from 'lib/getProdeByRaceAndYear'
 import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 import showDangerMessage from 'utils/showDangerMessage'
 import showSuccessMessage from 'utils/showSuccessMessage'
 
@@ -26,11 +29,13 @@ const ProdeForm = ({ raceId }: ProdeFormProps) => {
   const { data: session, status } = useSession()
 
   const loading = status === 'loading'
+  const carreraId = raceId != undefined ? raceId : 'NORACE'
 
   // const { drivers, isLoading, isError, isLoadingSlow } = useGetDrivers(
   //   dashboardConfig.currentYear
   // )
   const { drivers, isLoading, isError, isLoadingSlow } = useGetDrivers(2022)
+  const [isLoadingProde, setIsLoadingProde] = useState(true)
 
   const form = useForm({
     initialValues: {
@@ -46,13 +51,30 @@ const ProdeForm = ({ raceId }: ProdeFormProps) => {
     },
   })
 
+  useEffect(() => {
+    async function getFormValues() {
+      const res = await getProdeByRaceAndYear(
+        carreraId,
+        dashboardConfig.currentYear,
+        session?.user?.name
+      )
+      const prodeValues = res.obj
+      if (prodeValues) {
+        form.values.drivers = prodeValues.pilotosTop
+        form.values.dropouts = prodeValues.pilotosAbandono
+      }
+      setIsLoadingProde(false)
+    }
+    getFormValues()
+  }, [])
+
   const savePredictionUser = async () => {
     await axios
       .post(
         '/api/savePrediction',
         {
           userName: session?.user?.name,
-          raceId: raceId != undefined ? raceId : 'NORACE',
+          raceId: carreraId,
           topDrivers: form.values.drivers,
           dropouts: form.values.dropouts,
         },
@@ -86,7 +108,7 @@ const ProdeForm = ({ raceId }: ProdeFormProps) => {
       <ErrorMessage message="Ha ocurrido un error al obtener los pilotos" />
     )
 
-  if (isLoading)
+  if (isLoading || isLoadingProde)
     return (
       <>
         <Center>
