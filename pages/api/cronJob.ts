@@ -7,6 +7,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (ACTION_KEY === APP_KEY) {
       // Process the POST request
+
       res.status(200).json({ success: 'Success' })
     } else {
       res.status(401).json({ error: 'Unauthorized' })

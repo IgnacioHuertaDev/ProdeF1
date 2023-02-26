@@ -1,12 +1,4 @@
-import {
-  Box,
-  Center,
-  CSSObject,
-  MediaQuery,
-  Skeleton,
-  Table,
-  Title,
-} from '@mantine/core'
+import { Box, Center, MediaQuery, Skeleton, Table, Title } from '@mantine/core'
 import RaceInfo from 'components/dashboard/RaceInfo'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
@@ -30,26 +22,25 @@ const Calendar = () => {
     dashboardConfig.currentYear
   )
 
-  const hidden: CSSObject = {
-    display: 'none',
-  }
-
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null
 
   if (isError)
     return (
-      <ErrorMessage message="Ha ocurrido un error al obtener el calendario" />
+      <ErrorMessage
+        message="Ha ocurrido un error al obtener el calendario"
+        showButton={false}
+      />
     )
 
   if (isLoading)
     return (
       <>
         <Center>
-          <MediaQuery largerThan={935} styles={hidden}>
+          <MediaQuery largerThan={935} styles={{ display: 'none' }}>
             <Skeleton height={215} width="100%" radius="md" />
           </MediaQuery>
-          <MediaQuery smallerThan={935} styles={hidden}>
+          <MediaQuery smallerThan={935} styles={{ display: 'none' }}>
             <Skeleton height={215} width="65%" radius="md" />
           </MediaQuery>
         </Center>

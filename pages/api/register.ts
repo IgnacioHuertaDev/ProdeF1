@@ -38,8 +38,8 @@ const validateForm = async (
     return { error: 'Este nombre de usuario ya esta registrado' }
   }
 
-  if (password.length < 6) {
-    return { error: 'La contraseña debe tener 6 o mas caracteres' }
+  if (password.length < 4) {
+    return { error: 'La contraseña debe tener 4 o mas caracteres' }
   }
 
   return null

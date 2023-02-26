@@ -21,6 +21,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import BrandLogo from 'public/assets/brandLogo.png'
 import { useState } from 'react'
+import showDangerMessage from 'utils/showDangerMessage'
 
 export const bgWave = keyframes({
   '0%': { backgroundPosition: '0% 0%' },
@@ -128,22 +129,19 @@ const Authentication = () => {
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Email invalido'),
       password: (val) =>
-        val.length <= 5
-          ? 'La contraseña debe tener al menos 6 caracteres'
+        val.length <= 3
+          ? 'La contraseña debe tener al menos 4 caracteres'
           : null,
     },
   })
 
   const redirectToHome = () => {
-    const { pathname } = router
-    if (pathname === '/auth') {
-      // TODO: redirect to a success register page
-      router.push('/')
-    }
+    router.push('/')
   }
 
   const registerUser = async () => {
-    const res = await axios
+    setLoadingRequest(true)
+    await axios
       .post(
         '/api/register',
         {
@@ -159,24 +157,28 @@ const Authentication = () => {
         }
       )
       .then(async () => {
+        setLoadingRequest(false)
         await loginUser()
         redirectToHome()
       })
       .catch((error) => {
-        console.log(error)
+        showDangerMessage('Error al registrarse', error)
       })
-    console.log(res)
   }
 
   const loginUser = async () => {
-    const res: any = await signIn('credentials', {
+    setLoadingRequest(true)
+    const res = await signIn('credentials', {
       redirect: false,
       email: authForm.values.email,
       password: authForm.values.password,
       callbackUrl: '/',
     })
 
-    res.error ? console.log(res.error) : redirectToHome()
+    res?.error
+      ? showDangerMessage('Error al loguearse', res.error)
+      : redirectToHome()
+    setLoadingRequest(false)
   }
 
   return (
@@ -204,6 +206,11 @@ const Authentication = () => {
       <AuthFormProvider form={authForm}>
         <div className={classes.container}>
           <FormContainer backgroundColor={theme.colors.mainBrand[6]}>
+            <LoadingOverlay
+              visible={loadingRequest}
+              overlayBlur={2}
+              loaderProps={{ size: 'xl', color: 'mainBrand' }}
+            />
             <ImageContainer>
               <Image
                 src={BrandLogo}
@@ -232,6 +239,7 @@ const Authentication = () => {
                 <TextInput
                   required
                   label="Email"
+                  type="email"
                   placeholder="tuemail@gmail.com"
                   {...authForm.getInputProps('email')}
                 />

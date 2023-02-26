@@ -7,7 +7,6 @@ import {
 } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { IconArrowUp } from '@tabler/icons'
-import ErrorMessage from 'components/shared/ErrorMessage'
 import HeaderMinimal from 'components/shared/HeaderMinimal'
 import NavbarMinimal from 'components/shared/NavbarMinimal'
 import { useSession } from 'next-auth/react'
@@ -31,12 +30,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   // If no session exists, display access denied message
   if (!session) {
     router.push('/auth')
-    return (
-      <ErrorMessage
-        message="Acceso denegado, debe ingresar primero."
-        showButton={false}
-      />
-    )
   }
 
   return (

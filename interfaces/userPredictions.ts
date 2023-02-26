@@ -13,6 +13,7 @@ export interface Predictions {
   puntaje: number
   pilotosTop: PilotosTop[]
   pilotosAbandono: string[]
+  year: number
 }
 
 export interface UserPrediccions {

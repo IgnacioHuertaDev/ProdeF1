@@ -37,7 +37,7 @@ export default NextAuth({
 
         // Email Not found
         if (!user) {
-          throw new Error('Email is not registered')
+          throw new Error('El mail no esta registrado')
         }
 
         // Check hased password with DB hashed password
@@ -48,7 +48,7 @@ export default NextAuth({
 
         // Incorrect password
         if (!isPasswordCorrect) {
-          throw new Error('Password is incorrect')
+          throw new Error('La contraseña es incorrecta')
         }
 
         return user

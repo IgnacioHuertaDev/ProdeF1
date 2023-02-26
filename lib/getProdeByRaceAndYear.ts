@@ -16,7 +16,8 @@ async function getProdeByRaceAndYear(
   myHeaders.append('Content-Type', 'application/json')
 
   let body = JSON.stringify({
-    raceId: `${raceId}${year}`,
+    raceId: raceId,
+    year: year,
     userName: user,
   })
 

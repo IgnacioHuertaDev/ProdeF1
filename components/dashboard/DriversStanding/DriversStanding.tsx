@@ -22,7 +22,10 @@ const DriversStanding = () => {
 
   if (isError)
     return (
-      <ErrorMessage message="Ha ocurrido un error al obtener el calendario" />
+      <ErrorMessage
+        message="Ha ocurrido un error al obtener el mundial de pilotos"
+        showButton={false}
+      />
     )
 
   if (isLoading)

@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   Group,
   MediaQuery,
   Menu,
@@ -9,11 +10,10 @@ import {
 import { useFullscreen } from '@mantine/hooks'
 import { NextLink } from '@mantine/next'
 import { IconChevronRight } from '@tabler/icons'
-import LanguagePicker from 'components/shared/LanguagePicker'
+import { useSession } from 'next-auth/react'
 import { forwardRef } from 'react'
 import { AiOutlineFullscreen, AiOutlineFullscreenExit } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
-import { FaQuestionCircle } from 'react-icons/fa'
 import { IoMdPower } from 'react-icons/io'
 
 interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
@@ -31,13 +31,14 @@ const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
       sx={(theme) => ({
         display: 'block',
         width: '100%',
-        padding: theme.spacing.md,
+        padding: theme.spacing.sm,
+        margin: theme.spacing.sm,
         color:
           theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
         borderRadius: theme.radius.lg,
 
         '&:hover': {
-          backgroundColor: theme.fn.darken(theme.colors.mainBrand[6], 0.05),
+          backgroundColor: theme.fn.darken(theme.colors.dark[6], 0.6),
         },
       })}
       {...others}
@@ -75,33 +76,31 @@ UserButton.displayName = 'UserButton'
 export default function AvatarNav() {
   const { toggle, fullscreen } = useFullscreen()
 
+  const { data: session, status } = useSession()
+  const loading = status === 'loading'
+
+  // When rendering client side don't display anything until loading is complete
+  if (typeof window !== 'undefined' && loading) return null
+
   return (
     <Group position="center">
       <Menu position="bottom-end" withArrow>
         <Menu.Target>
           <UserButton
             image={<BsFillPersonFill color="white" size="25" />}
-            name={'Pepe'}
-            email={'Capo'}
+            name={session ? session?.user?.name : 'Not logged'}
+            email={session ? session?.user?.email : 'Not logged'}
           />
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item
             component={NextLink}
-            href="/dashboard/profile"
+            href="/profile"
             icon={<BsFillPersonFill size={14} />}
           >
             Mis datos
           </Menu.Item>
-          <Menu.Item
-            component={NextLink}
-            href="/dashboard/faq"
-            icon={<FaQuestionCircle size={14} />}
-          >
-            FAQ
-          </Menu.Item>
           <Menu.Divider />
-          <LanguagePicker />
           <Menu.Item
             onClick={toggle}
             icon={
@@ -116,10 +115,13 @@ export default function AvatarNav() {
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item
-            component={NextLink}
-            href="/"
-            color="red"
+            component={Button}
+            color="red.4"
             icon={<IoMdPower size={14} />}
+            // onClick={(e) => {
+            //   e.preventDefault()
+            //   signOut()
+            // }}
           >
             Cerrar sesión
           </Menu.Item>

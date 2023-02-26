@@ -8,6 +8,7 @@ import {
 } from '@mantine/core'
 import Image from 'next/image'
 import FormulaLogo from 'public/assets/brandLogo.png'
+import AvatarNav from '../AvatarNav'
 
 interface HeaderMinimalProps {
   opened: boolean
@@ -19,7 +20,14 @@ const HeaderMinimal = ({ opened, setOpened }: HeaderMinimalProps) => {
 
   return (
     <Header height={70} p="md">
-      <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '100%',
+        }}
+      >
         <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
           <Burger
             opened={opened}
@@ -37,7 +45,10 @@ const HeaderMinimal = ({ opened, setOpened }: HeaderMinimalProps) => {
             width="40"
             priority
           />
-          <Title order={1}>Prode F1 BP</Title>
+          <Title order={1}>Prode F1</Title>
+        </Group>
+        <Group align="end" spacing={40}>
+          <AvatarNav />
         </Group>
       </div>
     </Header>

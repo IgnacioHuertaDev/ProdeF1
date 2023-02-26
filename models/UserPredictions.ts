@@ -11,6 +11,10 @@ const predictionsSchema = new Schema({
     type: Number,
     default: 0,
   },
+  year: {
+    type: Number,
+    default: 0,
+  },
   pilotosTop: [
     {
       posicion: {

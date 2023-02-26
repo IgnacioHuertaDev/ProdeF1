@@ -49,12 +49,11 @@ export default async function handler(
 
   const errorMessage = await validatePrediction(topDrivers, dropouts)
 
-  const idCarrera = `${raceId}${dashboardConfig.currentYear}`
-
   // create or update a Prediction on MongoDB
   const newPrediction = {
-    idCarrera: idCarrera,
+    idCarrera: raceId,
     puntaje: 0,
+    year: dashboardConfig.currentYear,
     pilotosTop: topDrivers,
     pilotosAbandono: dropouts.map((piloto: string) => piloto),
   }
@@ -69,7 +68,7 @@ export default async function handler(
     if (userPredictions) {
       // buscar la predicción con el idCarrera especificado
       const existingPredictionIndex = userPredictions.predictions.findIndex(
-        (pred) => pred.idCarrera === idCarrera
+        (pred) => pred.idCarrera === raceId
       )
 
       if (existingPredictionIndex >= 0) {

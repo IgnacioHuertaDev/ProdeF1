@@ -1,25 +1,14 @@
 import dashboardConfig from 'dashboardConfig'
-import { Predictions as IPredictions } from 'interfaces/userPredictions'
+import { UserPrediccions } from 'interfaces/userPredictions'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-interface ResponseData {
-  error?: string
-  msg?: string
-  obj?: IPredictions | undefined
-}
-
-function useGetProde(
-  raceId: string,
-  year = dashboardConfig.currentYear,
-  user: string | null | undefined
-) {
+function useGetProdeByYear(year = dashboardConfig.currentYear) {
   let myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
   let body = JSON.stringify({
-    raceId: `${raceId}${year}`,
-    userName: user,
+    year: year,
   })
 
   let requestOptions: RequestInit = useMemo(
@@ -29,16 +18,18 @@ function useGetProde(
       body: body,
       redirect: 'follow',
     }),
-    [raceId, year, user]
+    [year]
   )
 
   const fetcher = (apiURL: string, requestOptions: RequestInit) =>
-    fetch(apiURL, requestOptions).then((res) => res.json())
+    fetch(apiURL, requestOptions)
+      .then((res) => res.json())
+      .then((json) => json.obj)
 
   const [isLoadingSlow, setIsLoadingSlow] = useState(false)
 
-  const { data, error } = useSWR<ResponseData>(
-    [`/api/getProdeByRaceAndYear`, requestOptions],
+  const { data, error } = useSWR<UserPrediccions[] | undefined>(
+    [`/api/getProdeByYear`, requestOptions],
     fetcher,
     {
       onLoadingSlow(key, config) {
@@ -55,4 +46,4 @@ function useGetProde(
   }
 }
 
-export default useGetProde
+export default useGetProdeByYear

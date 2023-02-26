@@ -22,7 +22,10 @@ const ConstructorsStanding = () => {
 
   if (isError)
     return (
-      <ErrorMessage message="Ha ocurrido un error al obtener el calendario" />
+      <ErrorMessage
+        message="Ha ocurrido un error al obtener el mundial de constructores"
+        showButton={false}
+      />
     )
 
   if (isLoading)

@@ -1,7 +1,4 @@
-import {
-  Predictions as IPredictions,
-  UserPrediccions,
-} from 'interfaces/userPredictions'
+import { UserPrediccions } from 'interfaces/userPredictions'
 import dbConnect from 'lib/dbConnect'
 import { UserPredictions } from 'models/UserPredictions'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -9,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 interface ResponseData {
   error?: string
   msg?: string
-  obj?: IPredictions | undefined
+  obj?: UserPrediccions[] | undefined
 }
 
 export default async function handler(
@@ -24,24 +21,21 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { raceId, year, userName } = req.body
+  const { year } = req.body
 
   await dbConnect()
 
   try {
     // buscar el documento UserPredictions correspondiente al usuario
-    const userPredictions: UserPrediccions | null =
-      await UserPredictions.findOne({
-        usuario: userName,
+    const usersPredictions: UserPrediccions[] | null =
+      await UserPredictions.find({
+        predictions: { $elemMatch: { year: year } },
       })
 
-    if (userPredictions) {
-      const existingPrediction = userPredictions.predictions.find(
-        (pred) => pred.idCarrera === raceId && pred.year == year
-      )
+    if (usersPredictions) {
       res.status(200).json({
         msg: 'Successfuly get existing Prediction',
-        obj: existingPrediction,
+        obj: usersPredictions,
       })
     } else {
       res.status(200).json({
