@@ -88,8 +88,8 @@ export default function AvatarNav() {
         <Menu.Target>
           <UserButton
             image={<BsFillPersonFill color="white" size="25" />}
-            name={session ? session?.user?.name : 'Not logged'}
-            email={session ? session?.user?.email : 'Not logged'}
+            name={session ? session.user!.name! : 'Not logged'}
+            email={session ? session.user!.email! : 'Not logged'}
           />
         </Menu.Target>
         <Menu.Dropdown>
