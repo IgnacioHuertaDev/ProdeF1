@@ -168,7 +168,18 @@ const Prode = () => {
             Predicciones
           </Title>
           <ActualRace />
-          <ProdeForm raceId={carreraActual[0]?.Circuit.circuitId} />
+          <ProdeForm
+            raceId={carreraActual[0]?.Circuit.circuitId}
+            disableSaveButton={
+              dayjs() >=
+              dayjs(
+                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
+              )
+            }
+            qualifyDate={dayjs(
+              `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
+            )}
+          />
         </div>
       </Box>
     </>

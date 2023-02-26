@@ -1,52 +1,4 @@
-import { Center, createStyles, Table, Title } from '@mantine/core'
-import {
-  IconCoin,
-  IconDiscount2,
-  IconReceipt2,
-  IconUserPlus,
-} from '@tabler/icons'
-
-const useStyles = createStyles((theme) => ({
-  root: {
-    padding: theme.spacing.xl * 1.5,
-  },
-
-  categoryCard: {
-    height: 160,
-    position: 'relative',
-    backgroundSize: '100%',
-    backgroundPosition: 'center',
-    color: theme.white,
-    borderRadius: theme.radius.lg,
-    padding: theme.spacing.xl,
-    overflow: 'hidden',
-    transition: 'background-size 300ms ease',
-
-    '&:hover': {
-      backgroundSize: '105%',
-    },
-  },
-
-  categoryLabel: {
-    color: theme.white,
-    zIndex: 2,
-    position: 'relative',
-  },
-
-  icon: {
-    color:
-      theme.colorScheme === 'dark'
-        ? theme.colors.dark[3]
-        : theme.colors.gray[4],
-  },
-}))
-
-const icons = {
-  user: IconUserPlus,
-  discount: IconDiscount2,
-  receipt: IconReceipt2,
-  coin: IconCoin,
-}
+import { Center, Table, Title } from '@mantine/core'
 
 interface EchiPageStatsProps {
   title: string
@@ -59,8 +11,6 @@ interface RankingProps {
 }
 
 export default function RankingTable({ title, data }: EchiPageStatsProps) {
-  const { classes } = useStyles()
-
   let rows = null
 
   if (data.length > 0) {

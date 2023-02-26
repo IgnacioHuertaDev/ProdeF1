@@ -14,6 +14,7 @@ import DropoutsDriversPicker from 'components/dashboard/DropoutsDriversPicker'
 import TopDriversPicker from 'components/dashboard/TopDriversPicker'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
+import dayjs, { Dayjs } from 'dayjs'
 import useGetDrivers from 'hooks/useGetDrivers'
 import getProdeByRaceAndYear from 'lib/getProdeByRaceAndYear'
 import { useSession } from 'next-auth/react'
@@ -23,9 +24,15 @@ import showSuccessMessage from 'utils/showSuccessMessage'
 
 interface ProdeFormProps {
   raceId: string
+  disableSaveButton: boolean
+  qualifyDate: Dayjs
 }
 
-const ProdeForm = ({ raceId }: ProdeFormProps) => {
+const ProdeForm = ({
+  raceId,
+  disableSaveButton,
+  qualifyDate,
+}: ProdeFormProps) => {
   const { data: session, status } = useSession()
 
   const loading = status === 'loading'
@@ -69,31 +76,38 @@ const ProdeForm = ({ raceId }: ProdeFormProps) => {
   }, [])
 
   const savePredictionUser = async () => {
-    await axios
-      .post(
-        '/api/savePrediction',
-        {
-          userName: session?.user?.name,
-          raceId: carreraId,
-          topDrivers: form.values.drivers,
-          dropouts: form.values.dropouts,
-        },
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+    if (dayjs() <= qualifyDate) {
+      await axios
+        .post(
+          '/api/savePrediction',
+          {
+            userName: session?.user?.name,
+            raceId: carreraId,
+            topDrivers: form.values.drivers,
+            dropouts: form.values.dropouts,
           },
-        }
-      )
-      .then(() => {
-        showSuccessMessage(
-          'Prediccion guardada',
-          'Su prediccion ha sido guardada con exito, puede seguir modificandola hasta antes del comienzo de la claisificación.'
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+          }
         )
-      })
-      .catch((error) => {
-        showDangerMessage('Prediccion anulada, intente nuevamente', error)
-      })
+        .then(() => {
+          showSuccessMessage(
+            'Prediccion guardada',
+            'Su prediccion ha sido guardada con exito, puede seguir modificandola hasta antes del comienzo de la claisificación.'
+          )
+        })
+        .catch((error) => {
+          showDangerMessage('Prediccion anulada, intente nuevamente', error)
+        })
+    } else {
+      showDangerMessage(
+        'Error al guardar',
+        'Ha empezado la clasificación, no se han podido guardar los resultados'
+      )
+    }
   }
 
   const hidden: CSSObject = {
@@ -162,6 +176,7 @@ const ProdeForm = ({ raceId }: ProdeFormProps) => {
       <Group position="center" mt="xl">
         <Button
           size="xl"
+          disabled={disableSaveButton}
           onClick={() => {
             savePredictionUser()
           }}
