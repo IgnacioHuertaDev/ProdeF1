@@ -74,28 +74,20 @@ export default async function handler(
     hashedPassword,
   })
 
-  newUser
-    .save()
-    .then(() =>
-      res.status(200).json({ msg: 'Successfuly created new User: ' + newUser })
-    )
-    .catch((err: string) =>
-      res.status(400).json({ error: "Error on '/api/register': " + err })
-    )
-
   // When users registers we generate prediction schema
   const newUserPredictions = new UserPredictions({
     usuario: username,
   })
 
-  newUserPredictions
-    .save()
-    .then(() =>
-      res.status(200).json({
-        msg: 'Successfuly created new UserPredictions: ' + newUserPredictions,
-      })
-    )
-    .catch((err: string) =>
-      res.status(400).json({ error: "Error on '/api/register': " + err })
-    )
+  try {
+    await Promise.all([newUser.save(), newUserPredictions.save()])
+
+    res.status(200).json({
+      msg: 'Successfuly created new User and UserPredictions',
+    })
+  } catch (err) {
+    res.status(400).json({
+      error: "Error on '/api/register': " + err,
+    })
+  }
 }
