@@ -157,9 +157,9 @@ const Authentication = () => {
         }
       )
       .then(async () => {
+        console.log('Registro correcto')
         setLoadingRequest(false)
-        await loginUser()
-        redirectToHome()
+        toggle()
       })
       .catch((error) => {
         showDangerMessage('Error al registrarse', error)
