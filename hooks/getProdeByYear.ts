@@ -1,5 +1,5 @@
 import dashboardConfig from 'dashboardConfig'
-import { UserPrediccions } from 'interfaces/userPredictions'
+import { UserPredictions } from 'interfaces/userPredictions'
 import { useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -28,7 +28,7 @@ function useGetProdeByYear(year = dashboardConfig.currentYear) {
 
   const [isLoadingSlow, setIsLoadingSlow] = useState(false)
 
-  const { data, error } = useSWR<UserPrediccions[] | undefined>(
+  const { data, error } = useSWR<UserPredictions[] | undefined>(
     [`/api/getProdeByYear`, requestOptions],
     fetcher,
     {
