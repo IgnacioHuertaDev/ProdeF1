@@ -1,5 +1,5 @@
 import dashboardConfig from 'dashboardConfig'
-import { UserPrediccions } from 'interfaces/userPredictions'
+import { UserPredictions as IUserPredictions } from 'interfaces/userPredictions'
 import dbConnect from 'lib/dbConnect'
 import { UserPredictions } from 'models/UserPredictions'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -60,7 +60,7 @@ export default async function handler(
 
   try {
     // buscar el documento UserPredictions correspondiente al usuario
-    const userPredictions: UserPrediccions | null =
+    const userPredictions: IUserPredictions | null =
       await UserPredictions.findOne({
         usuario: userName,
       })

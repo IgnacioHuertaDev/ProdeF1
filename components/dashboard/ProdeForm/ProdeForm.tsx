@@ -16,7 +16,7 @@ import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs, { Dayjs } from 'dayjs'
 import useGetDrivers from 'hooks/useGetDrivers'
-import getProdeByRaceAndYear from 'lib/getProdeByRaceAndYear'
+import getProdeByRaceYearUser from 'lib/getProdeByRaceYearUser'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import showDangerMessage from 'utils/showDangerMessage'
@@ -60,7 +60,7 @@ const ProdeForm = ({
 
   useEffect(() => {
     async function getFormValues() {
-      const res = await getProdeByRaceAndYear(
+      const res = await getProdeByRaceYearUser(
         carreraId,
         dashboardConfig.currentYear,
         session?.user?.name

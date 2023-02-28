@@ -38,13 +38,15 @@ const HeaderMinimal = ({ opened, setOpened }: HeaderMinimalProps) => {
           />
         </MediaQuery>
         <Group align="center" spacing={40}>
-          <Image
-            src={FormulaLogo}
-            alt="F1 Logo"
-            height="40"
-            width="40"
-            priority
-          />
+          <MediaQuery largerThan={500} styles={{ display: 'none' }}>
+            <Image
+              src={FormulaLogo}
+              alt="F1 Logo"
+              height="40"
+              width="40"
+              priority
+            />
+          </MediaQuery>
           <Title order={1}>Prode F1</Title>
         </Group>
         <Group align="end" spacing={40}>

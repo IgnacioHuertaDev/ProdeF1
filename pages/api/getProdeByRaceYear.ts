@@ -21,7 +21,7 @@ export default async function handler(
   }
 
   // get and validate body variables
-  const { year } = req.body
+  const { year, raceId } = req.body
 
   await dbConnect()
 
@@ -29,7 +29,7 @@ export default async function handler(
     // buscar el documento UserPredictions correspondiente al usuario
     const usersPredictions: IUserPredictions[] | null =
       await UserPredictions.find({
-        predictions: { $elemMatch: { year: year } },
+        predictions: { $elemMatch: { year: year, idCarrera: raceId } },
       })
 
     if (usersPredictions) {
@@ -44,7 +44,7 @@ export default async function handler(
     }
   } catch (error: any) {
     res.status(400).json({
-      error: "Error on '/api/getProdeByYear': " + error,
+      error: "Error on '/api/getProdeByRaceYear': " + error,
     })
   }
 }

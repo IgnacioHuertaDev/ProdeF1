@@ -7,7 +7,7 @@ interface ResponseData {
   obj?: IPredictions | undefined
 }
 
-async function getProdeByRaceAndYear(
+async function getProdeByRaceYearUser(
   raceId: string,
   year = dashboardConfig.currentYear,
   user: string | null | undefined
@@ -29,10 +29,10 @@ async function getProdeByRaceAndYear(
   }
 
   const response: ResponseData = await fetch(
-    `/api/getProdeByRaceAndYear`,
+    `/api/getProdeByRaceYearUser`,
     requestOptions
   ).then((res) => res.json())
 
   return response
 }
-export default getProdeByRaceAndYear
+export default getProdeByRaceYearUser

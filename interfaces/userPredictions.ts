@@ -16,7 +16,7 @@ export interface Predictions {
   year: number
 }
 
-export interface UserPrediccions {
+export interface UserPredictions {
   _id: Types.ObjectId
   usuario: string
   predictions: Predictions[]

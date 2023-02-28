@@ -1,6 +1,6 @@
 import {
   Predictions as IPredictions,
-  UserPrediccions,
+  UserPredictions as IUserPredictions,
 } from 'interfaces/userPredictions'
 import dbConnect from 'lib/dbConnect'
 import { UserPredictions } from 'models/UserPredictions'
@@ -30,7 +30,7 @@ export default async function handler(
 
   try {
     // buscar el documento UserPredictions correspondiente al usuario
-    const userPredictions: UserPrediccions | null =
+    const userPredictions: IUserPredictions | null =
       await UserPredictions.findOne({
         usuario: userName,
       })
@@ -50,7 +50,7 @@ export default async function handler(
     }
   } catch (error: any) {
     res.status(400).json({
-      error: "Error on '/api/getProdeByRaceAndYear': " + error,
+      error: "Error on '/api/getProdeByRaceYearUser': " + error,
     })
   }
 }

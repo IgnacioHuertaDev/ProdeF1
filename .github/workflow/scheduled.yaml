@@ -1,4 +1,4 @@
-name: hourly-cron-job
+name: process-prode-results
 on:
   # schedule:
   #   - cron: '*/1 * * * *'
@@ -8,8 +8,8 @@ jobs:
   cron:
     runs-on: ubuntu-latest
     steps:
-      - name: update-after-race-results
+      - name: update-points-after-race-results
         run: |
           curl --request POST \
-          --url 'https://prodef1.vercel.app/api/cronJob' \
+          --url 'https://prodef1.vercel.app/api/processProdeResults' \
           --header 'Authorization: Bearer ${{ secrets.ACTION_KEY }}'

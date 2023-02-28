@@ -143,12 +143,19 @@ const Prode = () => {
           </Paper>
 
           <Text size="sm" className={classes.value} mt={20}>
-            {`Tiempo restante: ${capitalizeFirstLetter(
-              dayjs().to(
-                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
-                true
+            {`Tiempo restante: ${
+              dayjs() <
+              dayjs(
+                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
               )
-            )}`}
+                ? capitalizeFirstLetter(
+                    dayjs().to(
+                      `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+                      true
+                    )
+                  )
+                : 'Predicciones cerradas'
+            }`}
           </Text>
         </>
       )
