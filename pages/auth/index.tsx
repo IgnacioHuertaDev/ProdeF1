@@ -142,24 +142,14 @@ const Authentication = () => {
   const registerUser = async () => {
     setLoadingRequest(true)
     await axios
-      .post(
-        '/api/register',
-        {
-          username: authForm.values.name,
-          email: authForm.values.email,
-          password: authForm.values.password,
-        },
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+      .post('/api/register', {
+        username: authForm.values.name,
+        email: authForm.values.email,
+        password: authForm.values.password,
+      })
       .then(async () => {
         setLoadingRequest(false)
-        await loginUser()
-        redirectToHome()
+        toggle()
       })
       .catch((error) => {
         showDangerMessage('Error al registrarse', error)

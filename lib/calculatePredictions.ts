@@ -6,7 +6,8 @@ function calculatePredictions(predictions: Predictions, respuestaAPI: RaceTable)
   const carrera =getCarreraApiByPrediction(predictions, respuestaAPI)
 
   if (!carrera) {
-    const msjError = 'No se encontró la carrera especificada en la respuesta de la API'
+    const msjError =
+      'No se encontró la carrera especificada en la respuesta de la API'
     console.error(msjError)
     throw new Error(msjError)
   }
@@ -29,7 +30,7 @@ function calculatePredictions(predictions: Predictions, respuestaAPI: RaceTable)
 
   const puntosAciertos = getPointsAciertos(predictions, carrera)
   puntos += puntosAciertos
-  
+
   const puntosAciertosOrden = getPointsAciertosByOrder(predictions, carrera)
   puntos += puntosAciertosOrden
 
@@ -62,8 +63,8 @@ function calculatePredictions(predictions: Predictions, respuestaAPI: RaceTable)
 }
 
 const statusAbandonos = new Map<string, string>([
-  ["Finished", "Finished"],
-  ["Lapped", "Lap"],
+  ['Finished', 'Finished'],
+  ['Lapped', 'Lap'],
 ])
 
 const ReglaPuntajeAciertos = new Map<number, number>([
@@ -98,8 +99,11 @@ const ReglaCarrerasPuntajeDoble =  new Map<string, string>([
 const getPilotosAbandonoResults = (carrera: Race)  => {
   //carrera.result.status != 'Finished' && !carrera.result.status.contains('Lap') para resultado "+1 Lap"
   return carrera.Results.filter(
-   (result) => result.status !== statusAbandonos.get("Finished") && (result.status.indexOf(statusAbandonos.get("Lapped") ?? "Lap") == -1)
-)}
+    (result) =>
+      result.status !== statusAbandonos.get('Finished') &&
+      result.status.indexOf(statusAbandonos.get('Lapped') ?? 'Lap') == -1
+  )
+}
 
 const getAllPilotosResults = (carrera: Race)  => {
   //carrera.result.status != 'Finished' && !carrera.result.status.contains('Lap') para resultado "+1 Lap"
@@ -125,7 +129,10 @@ const getMultiplicadorAbandonos = (predictions: Predictions, pilotosAbandono: Re
   return multiplicador
 }
 
-const getCantidadAciertosAbandono = (predictions: Predictions, pilotosAbandono: Result[]) => {
+const getCantidadAciertosAbandono = (
+  predictions: Predictions,
+  pilotosAbandono: Result[]
+) => {
   return predictions.pilotosAbandono.reduce(
     (aciertos = 0, pilotoPrediccion) => {
       const pilotosMatch = pilotosAbandono.find(
@@ -143,9 +150,9 @@ const getCantidadAciertosAbandono = (predictions: Predictions, pilotosAbandono: 
 const getCantidadAciertosAbandonoMitadCarrera = (predictions: Predictions, pilotosAbandono: Result[], raceTotalLaps: number) => {
   return predictions.pilotosAbandono.reduce(
     (aciertos = 0, pilotoPrediccion) => {
-      const pilotosMatch = pilotosAbandono.filter(x => Number(x.laps) <= (raceTotalLaps / 2) ).find(
-        (r) => r.Driver.code === pilotoPrediccion
-      )
+      const pilotosMatch = pilotosAbandono
+        .filter((x) => Number(x.laps) <= raceTotalLaps / 2)
+        .find((r) => r.Driver.code === pilotoPrediccion)
       if (!pilotosMatch) {
         return aciertos
       }
@@ -155,12 +162,16 @@ const getCantidadAciertosAbandonoMitadCarrera = (predictions: Predictions, pilot
   )
 }
 
-const getCantidadAciertosAbandonoCaotico = (predictions: Predictions, pilotosAbandono: Result[], raceTotalLaps: number) => {
+const getCantidadAciertosAbandonoCaotico = (
+  predictions: Predictions,
+  pilotosAbandono: Result[],
+  raceTotalLaps: number
+) => {
   return predictions.pilotosAbandono.reduce(
     (aciertos = 0, pilotoPrediccion) => {
-      const pilotosMatch = pilotosAbandono.filter(x => Number(x.laps) < 1 ).find(
-        (r) => r.Driver.code === pilotoPrediccion
-      )
+      const pilotosMatch = pilotosAbandono
+        .filter((x) => Number(x.laps) < 1)
+        .find((r) => r.Driver.code === pilotoPrediccion)
       if (!pilotosMatch) {
         return aciertos
       }
@@ -231,7 +242,10 @@ const getCantidadPenalidadPilotoNoParticipo = (predictions: Predictions, allPilo
   )
 }
 
-const getCarreraApiByPrediction = (predictions: Predictions, respuestaAPI: RaceTable) => {
+const getCarreraApiByPrediction = (
+  predictions: Predictions,
+  respuestaAPI: RaceTable
+) => {
   return respuestaAPI.Races.find(
     (r) =>
       r.Circuit.circuitId === predictions.idCarrera &&
@@ -239,109 +253,125 @@ const getCarreraApiByPrediction = (predictions: Predictions, respuestaAPI: RaceT
   )
 }
 
-const getPointsAciertos = (predictions: Predictions, carrera: Race) => { 
+const getPointsAciertos = (predictions: Predictions, carrera: Race) => {
   const cantidadAciertos = getCantidadAciertos(predictions, carrera)
 
   return ReglaPuntajeAciertos.get(cantidadAciertos) ?? 0
 }
 
 const getCantidadAciertos = (predictions: Predictions, carrera: Race) => {
-  return predictions.pilotosTop.reduce(
-    (aciertos, pilotoPrediccion) => {
-      const pilotosMatch = carrera.Results.find(
-        (r) => r.Driver.code === pilotoPrediccion.pilotoId
-      )
-      if (!pilotosMatch) {
-        return aciertos
-      }
-      if (Number(pilotosMatch.position) <= 5) {
-        return aciertos + 1
-      }
+  return predictions.pilotosTop.reduce((aciertos, pilotoPrediccion) => {
+    const pilotosMatch = carrera.Results.find(
+      (r) => r.Driver.code === pilotoPrediccion.pilotoId
+    )
+    if (!pilotosMatch) {
       return aciertos
-    },
-    0
-  )
+    }
+    if (Number(pilotosMatch.position) <= 5) {
+      return aciertos + 1
+    }
+    return aciertos
+  }, 0)
 }
 
-const getPointsAciertosByOrder =  (predictions: Predictions, carrera: Race) => {
-  const topFiveResults = getTopFiveResults(carrera);
+const getPointsAciertosByOrder = (predictions: Predictions, carrera: Race) => {
+  const topFiveResults = getTopFiveResults(carrera)
 
-  const cantidadAciertosPorPuesto = getCantidadAciertosPorPuesto(predictions, topFiveResults)
-  const cantidadAciertosPodio = getCantidadAciertosPodio(predictions, topFiveResults)
-  const cantidadAciertosExactos = getCantidadAciertosExactos(predictions, topFiveResults)
-  
-  const pointsPodio= getPuntajePorPodio(cantidadAciertosPodio)
+  const cantidadAciertosPorPuesto = getCantidadAciertosPorPuesto(
+    predictions,
+    topFiveResults
+  )
+  const cantidadAciertosPodio = getCantidadAciertosPodio(
+    predictions,
+    topFiveResults
+  )
+  const cantidadAciertosExactos = getCantidadAciertosExactos(
+    predictions,
+    topFiveResults
+  )
+
+  const pointsPodio = getPuntajePorPodio(cantidadAciertosPodio)
   const pointsExacto = getPuntajeCantAciertosExactos(cantidadAciertosExactos)
-  const pointsPorPuesto = getPuntajePorOrden(cantidadAciertosPorPuesto);
+  const pointsPorPuesto = getPuntajePorOrden(cantidadAciertosPorPuesto)
 
-  return  getPuntajeBonusCompleto(pointsPorPuesto, pointsExacto, pointsPodio)
-
+  return getPuntajeBonusCompleto(pointsPorPuesto, pointsExacto, pointsPodio)
 }
 
 // Si aciertan el puesto de un corredor reciben 2 pts.
-const getPuntajePorOrden = (cantAciertos: number) => cantAciertos * 2;
+const getPuntajePorOrden = (cantAciertos: number) => cantAciertos * 2
 // Si aciertan el podio de forma exacta 10pts.
-const getPuntajePorPodio = (cantAciertos: number) => cantAciertos === 3 ? 10 : 0;
+const getPuntajePorPodio = (cantAciertos: number) =>
+  cantAciertos === 3 ? 10 : 0
 // Si aciertan los 5 exactos  25 pts(no acumulativo con el de podio)
-const getPuntajeCantAciertosExactos = (cantAciertos: number) => cantAciertos === 5 ? 25 : 0;
+const getPuntajeCantAciertosExactos = (cantAciertos: number) =>
+  cantAciertos === 5 ? 25 : 0
 // Realiza el calculo con los anteriores 3 puntajes
 // Si gana bonus de 5 acierto no se otorgan puntos de Podio
-const getPuntajeBonusCompleto = (puntosPorPuesto: number, aciertosExactos: number, aciertoPuestos: number) => (
-  puntosPorPuesto + (aciertosExactos != 0 ? aciertosExactos : aciertoPuestos)
-)
+const getPuntajeBonusCompleto = (
+  puntosPorPuesto: number,
+  aciertosExactos: number,
+  aciertoPuestos: number
+) => puntosPorPuesto + (aciertosExactos != 0 ? aciertosExactos : aciertoPuestos)
 
-const getCantidadAciertosPorPuesto = (predictions: Predictions, topFiveResults: Result[]) => {
-  return predictions.pilotosTop.reduce(
-    (aciertos = 0, pilotoPrediccion) => {
-      const pilotosMatch = topFiveResults.find(
-        (r) => r.Driver.code === pilotoPrediccion.pilotoId
-      )
-      if (!pilotosMatch) {
-        return aciertos
-      }
-      if (Number(pilotosMatch.position) === pilotoPrediccion.posicion) {
-        return aciertos + 1
-      }
+const getCantidadAciertosPorPuesto = (
+  predictions: Predictions,
+  topFiveResults: Result[]
+) => {
+  return predictions.pilotosTop.reduce((aciertos = 0, pilotoPrediccion) => {
+    const pilotosMatch = topFiveResults.find(
+      (r) => r.Driver.code === pilotoPrediccion.pilotoId
+    )
+    if (!pilotosMatch) {
       return aciertos
-    },
-    0
-  )
+    }
+    if (Number(pilotosMatch.position) === pilotoPrediccion.posicion) {
+      return aciertos + 1
+    }
+    return aciertos
+  }, 0)
 }
 
-const getCantidadAciertosPodio = (predictions: Predictions, topFiveResults: Result[]) => {
-  return predictions.pilotosTop.filter(x => x.posicion <= 3).reduce(
-    (aciertos = 0, pilotoPrediccion) => {
-      const pilotosMatch = topFiveResults.filter(x => Number(x.position) <= 3).find(
-        (r) => r.Driver.code === pilotoPrediccion.pilotoId && Number(r.position) === pilotoPrediccion.posicion
-      )
+const getCantidadAciertosPodio = (
+  predictions: Predictions,
+  topFiveResults: Result[]
+) => {
+  return predictions.pilotosTop
+    .filter((x) => x.posicion <= 3)
+    .reduce((aciertos = 0, pilotoPrediccion) => {
+      const pilotosMatch = topFiveResults
+        .filter((x) => Number(x.position) <= 3)
+        .find(
+          (r) =>
+            r.Driver.code === pilotoPrediccion.pilotoId &&
+            Number(r.position) === pilotoPrediccion.posicion
+        )
       if (!pilotosMatch) {
         return aciertos
       }
       return aciertos + 1
-    },
-    0
-  )
+    }, 0)
 }
 
-const getCantidadAciertosExactos = (predictions: Predictions, topFiveResults: Result[]) => {
-  return predictions.pilotosTop.reduce(
-    (aciertos = 0, pilotoPrediccion) => {
-      const pilotosMatch = topFiveResults.find(
-        (r) => r.Driver.code === pilotoPrediccion.pilotoId && Number(r.position) === pilotoPrediccion.posicion
-      )
-      if (!pilotosMatch) {
-        return aciertos
-      }
-      return aciertos + 1
-    },
-    0
-  )
+const getCantidadAciertosExactos = (
+  predictions: Predictions,
+  topFiveResults: Result[]
+) => {
+  return predictions.pilotosTop.reduce((aciertos = 0, pilotoPrediccion) => {
+    const pilotosMatch = topFiveResults.find(
+      (r) =>
+        r.Driver.code === pilotoPrediccion.pilotoId &&
+        Number(r.position) === pilotoPrediccion.posicion
+    )
+    if (!pilotosMatch) {
+      return aciertos
+    }
+    return aciertos + 1
+  }, 0)
 }
 
 const getTopFiveResults = (carrera: Race) => {
-  return carrera.Results.filter(
-   (result) => Number(result.position) <= 5
-)}
+  return carrera.Results.filter((result) => Number(result.position) <= 5)
+}
 
 // REGLAMEMTO
 // 1.Ordenar del 1ro al 5to puesto el resultado de carrera del domingo.
@@ -363,12 +393,12 @@ const getTopFiveResults = (carrera: Race) => {
 
 // 3.Bonus abandonos
 
-// Deberan dar 3 pilotos que a su entender abandonen la carrera. 
+// Deberan dar 3 pilotos que a su entender abandonen la carrera.
 // Otorgara un bonus de multiplicar x1 si aciertan 1...x2 si aciertan 2 y x3 si aciertan 3.
 // Los puntos se otorgan de la siguiente manera...
 // DEPRECADO BEIBI
 // Si el que abandona se encuentra del puesto 11 al 20 les sumara 1 pto.
-// Del puesto 6 al 10 sumara 2 pts y del puesto 1 al 5 sumara 3 pts. 
+// Del puesto 6 al 10 sumara 2 pts y del puesto 1 al 5 sumara 3 pts.
 // DEPRECADO BEIBI
 
 // Si los tres corredores q pusieron para abandonar lo hacen antes de mitad de carrera multiplicara x 4.
