@@ -4,14 +4,26 @@ import { Predictions } from 'interfaces/userPredictions'
 function calculatePredictions(predictions: Predictions, respuestaAPI: RaceTable) {
   
   const carrera =getCarreraApiByPrediction(predictions, respuestaAPI)
+
   if (!carrera) {
     const msjError = 'No se encontró la carrera especificada en la respuesta de la API'
     console.error(msjError)
     throw new Error(msjError)
   }
   
+  const pilotosAbandonos = getPilotosAbandonoResults(carrera);
+  pilotosAbandonos.map(x => console.log('Abandono: ', x.Driver.code, x.status))
+
+  const allPilots = getAllPilotosResults(carrera);
+
+  const raceTotalLaps = Number(carrera.Results?.find(x => x.position == "1")?.laps ?? 0)
+  console.log('Race total Laps: ', raceTotalLaps)
+
+  //No se corrió la carrera o paso algo
+  if(raceTotalLaps === 0) return 0;
+
   let puntos = 0
-  let bonusAbandono = 0
+  let puntosAbandonos = 0
   let penalidadAbandonos = 0
   let multiplicadorAbandono = 0
 
@@ -21,34 +33,32 @@ function calculatePredictions(predictions: Predictions, respuestaAPI: RaceTable)
   const puntosAciertosOrden = getPointsAciertosByOrder(predictions, carrera)
   puntos += puntosAciertosOrden
 
-  const pilotosAbandonos = getPilotosAbandono(carrera);
-  pilotosAbandonos.map(x => console.log('Abandono: ', x.Driver.code, x.status))
-  
-  const raceTotalLaps = Number(carrera.Results.find(x => x.position == "1"))
-  console.log('Race total Laps: ', raceTotalLaps)
+  const aciertosAbandonos = getCantidadAciertosAbandono(predictions, pilotosAbandonos)
+  puntosAbandonos = ReglaPuntajeAbandono.get(aciertosAbandonos) ?? 0
 
   multiplicadorAbandono += getMultiplicadorAbandonos(predictions, pilotosAbandonos, raceTotalLaps)
+  puntosAbandonos *= multiplicadorAbandono
 
-  penalidadAbandonos += getPenalidadAbandonos(predictions, pilotosAbandonos)
+  penalidadAbandonos += getPenalidadAbandonos(predictions, pilotosAbandonos, allPilots)
   
-  const total = (puntos * bonusAbandono) - penalidadAbandonos;
+  const total = (puntos + puntosAbandonos) - penalidadAbandonos;
 
   console.table([
-    ["Total Aciertos", puntosAciertos],
-    ["Total Aciertos Orden", puntosAciertosOrden],
+    ["Aciertos", puntosAciertos],
+    ["Aciertos Orden", puntosAciertosOrden],
+    ["Total Puntos Acierto Y Orden", puntos],
+    ["Puntos Abandonos", ReglaPuntajeAbandono.get(aciertosAbandonos) ?? 0],
     ["Total Mult. Abandonos", multiplicadorAbandono],
+    ["Total Puntos Abandonos", puntosAbandonos],
     ["Total Penal. Abandonos", penalidadAbandonos],
-    ["Puntos Acierto Y Orden", puntos],
-    ["Multiplicado por Abandonos", puntos * multiplicadorAbandono],
-    ["Puntos menos Penalidad", puntos - penalidadAbandonos],
     ["Total de los Totales", total]
   ])
   
+  if(ReglaCarrerasPuntajeDoble.get(carrera.Circuit.circuitId) !== undefined){
+    return total * 2
+  }
+
   return total
-  // C)Hay 3 carreras con puntaje doble..
-  // Monaco, a elegir y Yas Marina
-  // return total * 2
-  
 }
 
 const statusAbandonos = new Map<string, string>([
@@ -64,29 +74,54 @@ const ReglaPuntajeAciertos = new Map<number, number>([
   [5, 20],
 ])
 
-const getPilotosAbandono = (carrera: Race)  => {
+const ReglaPuntajeAbandono =  new Map<number, number>([
+  [1, 1],
+  [2, 4],
+  [3, 6]
+])
+
+const ReglaPuntajePenalidadAbandonos =  new Map<number, number>([
+  [1, 1],
+  [2, 3],
+  [3, 6],
+  [4, 10],
+  [5, 20]
+])
+
+const ReglaCarrerasPuntajeDoble =  new Map<string, string>([
+  ["yas_marina", "Yas Marina"],
+  ["monaco", "Monaco"],
+  ["baku", "Baku"],
+])
+
+
+const getPilotosAbandonoResults = (carrera: Race)  => {
   //carrera.result.status != 'Finished' && !carrera.result.status.contains('Lap') para resultado "+1 Lap"
   return carrera.Results.filter(
    (result) => result.status !== statusAbandonos.get("Finished") && (result.status.indexOf(statusAbandonos.get("Lapped") ?? "Lap") == -1)
 )}
 
+const getAllPilotosResults = (carrera: Race)  => {
+  //carrera.result.status != 'Finished' && !carrera.result.status.contains('Lap') para resultado "+1 Lap"
+  return carrera.Results
+}
+
 const getMultiplicadorAbandonos = (predictions: Predictions, pilotosAbandono: Result[], raceTotalLaps: number) => {
   // Multiplicar el total o que ?? como no entiendo devuelvo el multiplicador
-  let multiplicador = 0
-
-  const aciertosAbandono = getCantidadAciertosAbandono(predictions, pilotosAbandono)
-  // Otorgara un bonus de multiplicar x1 si aciertan 1...x2 si aciertan 2 y x3 si aciertan 3.
-  multiplicador = aciertosAbandono
+  let multiplicador = 1
 
   // Si los tres corredores q pusieron para abandonar lo hacen antes de mitad de carrera multiplicara x 4.
-  const aciertosAbandonoExtacto = getCantidadAciertosAbandonoExacto(predictions, pilotosAbandono, raceTotalLaps)
-  if(aciertosAbandonoExtacto === 3) multiplicador = 4
+  const aciertosAbandonoMitadCarrera = getCantidadAciertosAbandonoMitadCarrera(predictions, pilotosAbandono, raceTotalLaps)
+  if(aciertosAbandonoMitadCarrera === 3) multiplicador = 4
 
   // Si los 3 corredores no llegan a completar 1 vuelta se multiplicara x 5
   let aciertosAbandonoCaotico = getCantidadAciertosAbandonoCaotico(predictions, pilotosAbandono, raceTotalLaps)
-  if(aciertosAbandonoCaotico === 3) multiplicador = 5 //Me cago de risa si esto pasa
-  console.log("PENTAKILL !")
-
+  if(aciertosAbandonoCaotico === 3)
+  {
+    multiplicador = 5 //Me cago de risa si esto pasa
+    console.log("PENTAKILL !")
+  }
+  
   return multiplicador
 }
 
@@ -105,7 +140,7 @@ const getCantidadAciertosAbandono = (predictions: Predictions, pilotosAbandono: 
   )
 }
 
-const getCantidadAciertosAbandonoExacto = (predictions: Predictions, pilotosAbandono: Result[], raceTotalLaps: number) => {
+const getCantidadAciertosAbandonoMitadCarrera = (predictions: Predictions, pilotosAbandono: Result[], raceTotalLaps: number) => {
   return predictions.pilotosAbandono.reduce(
     (aciertos = 0, pilotoPrediccion) => {
       const pilotosMatch = pilotosAbandono.filter(x => Number(x.laps) <= (raceTotalLaps / 2) ).find(
@@ -135,20 +170,65 @@ const getCantidadAciertosAbandonoCaotico = (predictions: Predictions, pilotosAba
   )
 }
 
-const getPenalidadAbandonos = (predictions: Predictions, pilotosAbandono: Result[]) => {
+const getPenalidadAbandonos = (predictions: Predictions, pilotosAbandono: Result[], allPilotosResult: Result[]) => {
   // Si los corredores que pusieron para llegar del 1ro al 5to abandonan durante la carrera recibiran las siguientes penalidades:
-  // getPilotosAbandonoMatch()
-
-  // 1 abandono resta 1 pto
-  // 2 abandonos resta 3 pts
-  // 3 abandonos resta 6 pts
-  // 4 abandonos resta 10pts
-  // 5 abandonos resta 20pts
+  const cantidadPilotosAbandonoMatch = getCantidadPenalidadAbandonosMatch(predictions, pilotosAbandono)
   
-  // Si abandona antes de la primera vuelta o no larga la carrera restara 5 pts mas por cada corredor
-  // getPilotosSalados()
+  let puntosPenalidad = ReglaPuntajePenalidadAbandonos.get(cantidadPilotosAbandonoMatch) ?? 0
+  
+  // Si abandona antes de la primera vuelta 
+  const cantidadPenalidadesAbandonosPrimerVuelta = getCantidadPenalidadAbandonosPrimerVuelta(predictions, pilotosAbandono)
+  //no larga la carrera restara 5 pts mas por cada corredor
+  const cantidadPenalidadesPilotoNoParticipo = getCantidadPenalidadPilotoNoParticipo(predictions, allPilotosResult)
 
-  return 0
+  puntosPenalidad += (cantidadPenalidadesAbandonosPrimerVuelta + cantidadPenalidadesPilotoNoParticipo) * 5
+
+  return puntosPenalidad
+}
+
+const getCantidadPenalidadAbandonosMatch = (predictions: Predictions, pilotosAbandono: Result[]) => {
+  return predictions.pilotosTop.reduce(
+    (aciertos = 0, pilotoPrediccion) => {
+      const pilotosMatch = pilotosAbandono.find(
+        (r) => r.Driver.code === pilotoPrediccion.pilotoId
+      )
+      if (!pilotosMatch) {
+        return aciertos
+      }
+      return aciertos + 1
+    },
+    0
+  )
+}
+
+const getCantidadPenalidadAbandonosPrimerVuelta = (predictions: Predictions, pilotosAbandono: Result[]) => {
+  return predictions.pilotosTop.reduce(
+    (aciertos = 0, pilotoPrediccion) => {
+      const pilotosMatch = pilotosAbandono.filter(x => Number(x.laps) < 1).find(
+        (r) => r.Driver.code === pilotoPrediccion.pilotoId
+      )
+      if (!pilotosMatch) {
+        return aciertos
+      }
+      return aciertos + 1
+    },
+    0
+  )
+}
+
+const getCantidadPenalidadPilotoNoParticipo = (predictions: Predictions, allPilotosResult: Result[]) => {
+  return predictions.pilotosTop.reduce(
+    (aciertos = 0, pilotoPrediccion) => {
+      const pilotosMatch = allPilotosResult.find(
+        (r) => r.Driver.code === pilotoPrediccion.pilotoId
+      )
+      if (!pilotosMatch) {
+        return aciertos +1
+      }
+      return aciertos
+    },
+    0
+  )
 }
 
 const getCarreraApiByPrediction = (predictions: Predictions, respuestaAPI: RaceTable) => {
