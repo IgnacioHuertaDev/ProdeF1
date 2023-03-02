@@ -19,13 +19,13 @@ export default async function handler(
       const raceName = raceResultsResponse.Races[0].Circuit.circuitName
 
       const usersPredictions = await getProdeByRaceYear(raceId, 2022)
+      console.log(usersPredictions);
 
       usersPredictions.map(async (userPredictions) => {
         const points = calculatePredictions(
           userPredictions.predictions[0],
           raceResultsResponse
         )
-        console.log('Points', points)
 
         // Se busca el usuario a modificar
         // const userPredictionsModel: IUserPredictions | null =
