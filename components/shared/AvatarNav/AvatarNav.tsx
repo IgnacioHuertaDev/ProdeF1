@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Button,
   Group,
   MediaQuery,
   Menu,
@@ -10,7 +9,7 @@ import {
 import { useFullscreen } from '@mantine/hooks'
 import { NextLink } from '@mantine/next'
 import { IconChevronRight } from '@tabler/icons'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { forwardRef } from 'react'
 import { AiOutlineFullscreen, AiOutlineFullscreenExit } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
@@ -115,13 +114,13 @@ export default function AvatarNav() {
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item
-            component={Button}
+            component="button"
             color="red.4"
             icon={<IoMdPower size={14} />}
-            // onClick={(e) => {
-            //   e.preventDefault()
-            //   signOut()
-            // }}
+            onClick={(e) => {
+              e.preventDefault()
+              signOut()
+            }}
           >
             Cerrar sesión
           </Menu.Item>
