@@ -15,9 +15,6 @@ import ProdeForm from 'components/dashboard/ProdeForm'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs from 'dayjs'
-import 'dayjs/locale/es'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import useGetSchedule from 'hooks/useGetSchedule'
 import { Race } from 'interfaces/schedule'
 import DashboardLayout from 'layouts/DashboardLayout'
@@ -56,9 +53,8 @@ const useStyles = createStyles((theme) => ({
 }))
 
 const Prode = () => {
-  dayjs.extend(customParseFormat)
-  dayjs.extend(relativeTime)
-  dayjs.locale('es')
+  const formatoFecha = 'YYYY-MM-DD/HH:mm:ss[Z]' // formato reconocido por Dayjs
+
   const { classes } = useStyles()
   const { status } = useSession()
   const loading = status === 'loading'
@@ -129,15 +125,21 @@ const Prode = () => {
             <Text size="sm" color="dimmed" mt={7}>
               {`Carrera: ${capitalizeFirstLetter(
                 dayjs(
-                  `${carreraActual[0].date}/${carreraActual[0].time}`
-                ).format(`dddd, D [de] MMMM, YYYY - h:mm A`)
+                  `${carreraActual[0].date}/${carreraActual[0].time}`,
+                  formatoFecha
+                )
+                  .subtract(3, 'hours')
+                  .format(`dddd, D [de] MMMM, YYYY - h:mm A`)
               )}`}
             </Text>
             <Text size="sm" color="dimmed" mt={7}>
               {`Clasificación: ${capitalizeFirstLetter(
                 dayjs(
-                  `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
-                ).format(`dddd, D [de] MMMM, YYYY - h:mm A`)
+                  `${carreraActual[0].Qualifying.date}/${carreraActual[0].time}`,
+                  formatoFecha
+                )
+                  .subtract(3, 'hours')
+                  .format(`dddd, D [de] MMMM, YYYY - h:mm A`)
               )}`}
             </Text>
           </Paper>
@@ -146,11 +148,15 @@ const Prode = () => {
             {`Tiempo restante: ${
               dayjs() <
               dayjs(
-                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
-              )
+                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+                formatoFecha
+              ).subtract(3, 'hours')
                 ? capitalizeFirstLetter(
                     dayjs().to(
-                      `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+                      dayjs(
+                        `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+                        formatoFecha
+                      ).subtract(3, 'hours'),
                       true
                     )
                   )
@@ -181,11 +187,11 @@ const Prode = () => {
               dayjs() >=
               dayjs(
                 `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
-              )
+              ).subtract(3, 'hours')
             }
             qualifyDate={dayjs(
               `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
-            )}
+            ).subtract(3, 'hours')}
           />
         </div>
       </Box>

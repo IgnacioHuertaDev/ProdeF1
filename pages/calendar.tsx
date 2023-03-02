@@ -3,8 +3,6 @@ import RaceInfo from 'components/dashboard/RaceInfo'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs from 'dayjs'
-import 'dayjs/locale/es'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
 import useGetSchedule from 'hooks/useGetSchedule'
 import { Race } from 'interfaces/schedule'
 import DashboardLayout from 'layouts/DashboardLayout'
@@ -13,8 +11,7 @@ import { ReactElement } from 'react'
 import capitalizeFirstLetter from 'utils/capitalizeFirstLetter'
 
 const Calendar = () => {
-  dayjs.extend(customParseFormat)
-  dayjs.locale('es')
+  const formatoFecha = 'YYYY-MM-DD/HH:mm:ss[Z]' // formato reconocido por Dayjs
   const { status } = useSession()
   const loading = status === 'loading'
 
@@ -74,9 +71,9 @@ const Calendar = () => {
         <td>{element.raceName}</td>
         <td>{element.Circuit.circuitName}</td>
         <td>{`${capitalizeFirstLetter(
-          dayjs(`${element.date}/${element.time}`).format(
-            `dddd, D [de] MMMM, YYYY - h:mm A`
-          )
+          dayjs(`${element.date}/${element.time}`, formatoFecha)
+            .subtract(3, 'hours')
+            .format(`dddd, D [de] MMMM, YYYY - h:mm A`)
         )}`}</td>
       </tr>
     ))

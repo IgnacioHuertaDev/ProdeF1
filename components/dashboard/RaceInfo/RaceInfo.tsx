@@ -1,8 +1,6 @@
 import { createStyles, Group, Paper, SimpleGrid, Text } from '@mantine/core'
 import { IconGps } from '@tabler/icons'
 import dayjs from 'dayjs'
-import 'dayjs/locale/es'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
 import capitalizeFirstLetter from 'utils/capitalizeFirstLetter'
 
 const useStyles = createStyles((theme) => ({
@@ -50,9 +48,8 @@ interface RaceInfoProps {
 }
 
 const RaceInfo = ({ data }: RaceInfoProps) => {
-  dayjs.extend(customParseFormat)
-  dayjs.locale('es')
   const { classes } = useStyles()
+  const formatoFecha = 'YYYY-MM-DD/HH:mm:ss[Z]' // formato reconocido por Dayjs
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon]
 
@@ -72,9 +69,9 @@ const RaceInfo = ({ data }: RaceInfoProps) => {
         <Text size="xs" color="dimmed" mt={7}>
           Fecha:{' '}
           {`${capitalizeFirstLetter(
-            dayjs(`${stat.date}/${stat.time}`).format(
-              `dddd, D [de] MMMM, YYYY - h:mm A`
-            )
+            dayjs(`${stat.date}/${stat.time}`, formatoFecha)
+              .subtract(3, 'hours')
+              .format(`dddd, D [de] MMMM, YYYY - h:mm A`)
           )}`}
         </Text>
       </Paper>

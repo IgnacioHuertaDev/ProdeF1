@@ -9,9 +9,21 @@ import { useWindowScroll } from '@mantine/hooks'
 import { IconArrowUp } from '@tabler/icons'
 import HeaderMinimal from 'components/shared/HeaderMinimal'
 import NavbarMinimal from 'components/shared/NavbarMinimal'
+import dayjs from 'dayjs'
+import 'dayjs/locale/es'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(customParseFormat)
+dayjs.extend(relativeTime)
+// dayjs.tz.setDefault('America/Argentina/Buenos_Aires')
+dayjs.locale('es')
 
 interface DashboardLayoutProps {
   children?: JSX.Element
