@@ -1,35 +1,34 @@
-
 export const StatusAbandonos = new Map<string, string>([
-    ['Finished', 'Finished'],
-    ['Lapped', 'Lap'],
+  ['Finished', 'Finished'],
+  ['Lapped', 'Lap'],
 ])
 
 export const ReglaPuntajeAciertos = new Map<number, number>([
-    [1, 1],
-    [2, 3],
-    [3, 6],
-    [4, 12],
-    [5, 20],
+  [1, 1],
+  [2, 3],
+  [3, 6],
+  [4, 12],
+  [5, 20],
 ])
 
-export const ReglaPuntajeAbandono =  new Map<number, number>([
-    [1, 1],
-    [2, 4],
-    [3, 6]
+export const ReglaPuntajeAbandono = new Map<number, number>([
+  [1, 1],
+  [2, 4],
+  [3, 9],
 ])
 
-export const ReglaPuntajePenalidadAbandonos =  new Map<number, number>([
-    [1, 1],
-    [2, 3],
-    [3, 6],
-    [4, 10],
-    [5, 20]
+export const ReglaPuntajePenalidadAbandonos = new Map<number, number>([
+  [1, 1],
+  [2, 3],
+  [3, 6],
+  [4, 10],
+  [5, 20],
 ])
 
-export const ReglaCarrerasPuntajeDoble =  new Map<string, string>([
-    ["yas_marina", "Yas Marina"],
-    ["monaco", "Monaco"],
-    ["baku", "Baku"],
+export const ReglaCarrerasPuntajeDoble = new Map<string, string>([
+  ['yas_marina', 'Yas Marina'],
+  ['monaco', 'Monaco'],
+  ['baku', 'Baku'],
 ])
 
 export const ReglaMultiplicadorAbandonoMitadCarrera = 4
