@@ -19,7 +19,7 @@ import { ReactElement } from 'react'
 const Profile = () => {
   dayjs.extend(customParseFormat)
   dayjs.locale('es')
-  const { status } = useSession()
+  const { data: session, status } = useSession()
   const loading = status === 'loading'
 
   const { schedule, isLoading, isError, isLoadingSlow } = useGetSchedule(
@@ -69,6 +69,29 @@ const Profile = () => {
         <Title order={3} mb={15}>
           Proximamente...
         </Title>
+        {/* <SimpleGrid
+          mt={100}
+          cols={2}
+          breakpoints={[{ maxWidth: 'lg', cols: 1 }]}
+        >
+          <SimpleGrid
+            cols={2}
+            spacing="sm"
+            breakpoints={[
+              { maxWidth: 980, cols: 1, spacing: 'sm' },
+              { maxWidth: 755, cols: 1, spacing: 'sm' },
+            ]}
+          >
+            <Box>
+              <Text color="gray.6">Nombre:&nbsp;</Text>
+              <Text>{session?.user!.name!}</Text>
+            </Box>
+            <Box>
+              <Text color="gray.6">Email:&nbsp;</Text>
+              <Text>{session?.user!.email!}</Text>
+            </Box>
+          </SimpleGrid>
+        </SimpleGrid> */}
       </Box>
     </>
   )
