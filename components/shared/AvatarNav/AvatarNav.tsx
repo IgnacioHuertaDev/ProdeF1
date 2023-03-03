@@ -117,7 +117,7 @@ export default function AvatarNav() {
             component="button"
             color="red.4"
             icon={<IoMdPower size={14} />}
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
               e.preventDefault()
               signOut()
             }}
