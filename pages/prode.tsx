@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Center,
   createStyles,
   CSSObject,
@@ -181,16 +182,27 @@ const Prode = () => {
             Predicciones
           </Title>
           <ActualRace />
+          <Button
+            size="md"
+            mt="xl"
+            onClick={() => {
+              alert('hola')
+            }}
+          >
+            Reglas
+          </Button>
           <ProdeForm
             raceId={carreraActual[0]?.Circuit.circuitId}
             disableSaveButton={
               dayjs() >=
               dayjs(
-                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
+                `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+                formatoFecha
               ).subtract(3, 'hours')
             }
             qualifyDate={dayjs(
-              `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`
+              `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+              formatoFecha
             ).subtract(3, 'hours')}
           />
         </div>

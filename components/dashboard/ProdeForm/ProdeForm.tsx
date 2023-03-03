@@ -145,7 +145,7 @@ const ProdeForm = ({
   return (
     <>
       <SimpleGrid
-        mt={50}
+        mt="xl"
         cols={2}
         spacing={70}
         breakpoints={[{ maxWidth: 'lg', cols: 1 }]}
