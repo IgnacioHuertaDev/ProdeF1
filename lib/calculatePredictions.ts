@@ -8,7 +8,6 @@ import { getAllPilotosResults, getCantidadAciertosAbandono, getCarreraApiByPredi
 function calculatePredictions(predictions: Predictions, respuestaAPI: RaceTable) {
   
   const carrera = getCarreraApiByPrediction(predictions, respuestaAPI)
-  console.log('holis');
   
   if (!carrera) {
     const msjError = 'No se encontró la carrera especificada en la respuesta de la API'
