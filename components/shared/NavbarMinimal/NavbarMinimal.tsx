@@ -9,7 +9,7 @@ import {
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { MouseEventHandler, useState } from 'react'
+import { forwardRef, MouseEventHandler, useState } from 'react'
 import {
   CalendarEvent,
   Home2,
@@ -68,16 +68,10 @@ interface NavbarLinkProps {
   page: string
 }
 
-function NavbarLink({
-  icon: Icon,
-  label,
-  active,
-  onClick,
-  page,
-}: NavbarLinkProps) {
-  const { classes, cx } = useStyles()
-  return (
-    <Tooltip label={label} position="right" withArrow transitionDuration={0}>
+const NavbarLink = forwardRef<any, NavbarLinkProps>(
+  ({ icon: Icon, label, active, onClick, page }, ref) => {
+    const { classes, cx } = useStyles()
+    return (
       <Link href={`/${page}`} passHref>
         <UnstyledButton
           component="a"
@@ -87,9 +81,11 @@ function NavbarLink({
           <Icon />
         </UnstyledButton>
       </Link>
-    </Tooltip>
-  )
-}
+    )
+  }
+)
+
+NavbarLink.displayName = 'NavbarLink'
 
 interface NavbarButtonProps {
   icon: Icon
@@ -98,12 +94,12 @@ interface NavbarButtonProps {
   onClick: MouseEventHandler<HTMLAnchorElement>
 }
 
-function NavbarButton({
+const NavbarButton = ({
   icon: Icon,
   label,
   active,
   onClick,
-}: NavbarButtonProps) {
+}: NavbarButtonProps) => {
   const { classes, cx } = useStyles()
   return (
     <Tooltip label={label} position="right" withArrow transitionDuration={0}>
@@ -118,6 +114,8 @@ function NavbarButton({
   )
 }
 
+NavbarButton.displayName = 'NavbarButton'
+
 interface NavbarMinimalProps {
   opened: boolean
 }
@@ -131,18 +129,28 @@ const NavbarMinimal = ({ opened }: NavbarMinimalProps) => {
   const { data: session, status } = useSession()
   const loading = status === 'loading'
 
+  // When rendering client side don't display anything until loading is complete
+  if (typeof window !== 'undefined' && loading) return null
+
   const links = mockdata.map((link, index) => {
     const { Icon, label, page } = link
-    router
+
     return (
-      <NavbarLink
-        icon={Icon}
+      <Tooltip
         label={label}
+        position="right"
+        withArrow
+        transitionDuration={0}
         key={index}
-        active={router.pathname === `/${page}`}
-        onClick={() => setActive(router.pathname)}
-        page={page}
-      ></NavbarLink>
+      >
+        <NavbarLink
+          icon={Icon}
+          label={label}
+          active={router.pathname === `/${page}`}
+          onClick={() => setActive(router.pathname)}
+          page={page}
+        ></NavbarLink>
+      </Tooltip>
     )
   })
 
@@ -156,7 +164,7 @@ const NavbarMinimal = ({ opened }: NavbarMinimalProps) => {
     >
       <Navbar.Section grow mt={0}>
         <Group align="center" spacing={0}>
-          {links}
+          <Tooltip.Group>{links}</Tooltip.Group>
         </Group>
       </Navbar.Section>
       <Navbar.Section mb={120}>
