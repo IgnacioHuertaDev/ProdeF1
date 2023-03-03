@@ -64,8 +64,8 @@ const logResults = (
     ["Total Puntos Acierto Y Orden", aciertosMasOrden],
     ["Puntos Abandonos", abandonos],
     ["Total Mult. Abandonos", multiplicadorAbandono],
-    ["Total Puntos Abandonos", abandonos ],
-    ["Total Penal. Abandonos", abandonos * multiplicadorAbandono],
+    ["Total Puntos Abandonos", abandonos * multiplicadorAbandono],
+    ["Total Penal. Abandonos", penalidadAbandonos],
     ["Total de los Totales", total]
   ])
 }
