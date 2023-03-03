@@ -47,7 +47,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <>
       <AppShell
-        navbar={<NavbarMinimal opened={opened} />}
+        navbar={<NavbarMinimal opened={opened} setOpened={setOpened} />}
         header={<HeaderMinimal opened={opened} setOpened={setOpened} />}
         fixed
         navbarOffsetBreakpoint="sm"

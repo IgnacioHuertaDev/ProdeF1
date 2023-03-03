@@ -118,9 +118,10 @@ NavbarButton.displayName = 'NavbarButton'
 
 interface NavbarMinimalProps {
   opened: boolean
+  setOpened: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavbarMinimal = ({ opened }: NavbarMinimalProps) => {
+const NavbarMinimal = ({ opened, setOpened }: NavbarMinimalProps) => {
   const router = useRouter()
   const [active, setActive] = useState(router.pathname)
 
@@ -147,7 +148,7 @@ const NavbarMinimal = ({ opened }: NavbarMinimalProps) => {
           icon={Icon}
           label={label}
           active={router.pathname === `/${page}`}
-          onClick={() => setActive(router.pathname)}
+          onClick={() => (setActive(router.pathname), setOpened(false))}
           page={page}
         ></NavbarLink>
       </Tooltip>
