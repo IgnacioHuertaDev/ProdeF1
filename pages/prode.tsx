@@ -11,8 +11,10 @@ import {
   Text,
   Title,
 } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { IconGps } from '@tabler/icons'
 import ProdeForm from 'components/dashboard/ProdeForm'
+import RulesModal from 'components/dashboard/RulesModal'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs from 'dayjs'
@@ -58,6 +60,8 @@ const Prode = () => {
 
   const { classes } = useStyles()
   const { status } = useSession()
+  const [opened, { open, close }] = useDisclosure(false)
+
   const loading = status === 'loading'
 
   const { schedule, isLoading, isError, isLoadingSlow } = useGetSchedule(
@@ -182,15 +186,10 @@ const Prode = () => {
             Predicciones
           </Title>
           <ActualRace />
-          <Button
-            size="md"
-            mt="xl"
-            onClick={() => {
-              alert('hola')
-            }}
-          >
-            Reglas
+          <Button size="md" mt="xl" onClick={open}>
+            Reglamento
           </Button>
+          <RulesModal opened={opened} onClose={close} />
           <ProdeForm
             raceId={carreraActual[0]?.Circuit.circuitId}
             disableSaveButton={

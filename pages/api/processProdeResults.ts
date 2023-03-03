@@ -1,3 +1,4 @@
+import dashboardConfig from 'dashboardConfig'
 import calculatePredictions from 'lib/calculatePredictions'
 import getMostRecentRaceResult from 'lib/getMostRecentRaceResult'
 import getProdeByRaceYear from 'lib/getProdeByRaceYear'
@@ -18,8 +19,11 @@ export default async function handler(
       const raceId = raceResultsResponse.Races[0].Circuit.circuitId
       const raceName = raceResultsResponse.Races[0].Circuit.circuitName
 
-      const usersPredictions = await getProdeByRaceYear(raceId, 2022)
-      console.log(usersPredictions);
+      const usersPredictions = await getProdeByRaceYear(
+        raceId,
+        dashboardConfig.currentYear
+      )
+      console.log(usersPredictions)
 
       usersPredictions.map(async (userPredictions) => {
         const points = calculatePredictions(
