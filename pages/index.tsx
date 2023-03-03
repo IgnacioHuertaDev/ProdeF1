@@ -71,7 +71,7 @@ const Home = () => {
           padding: theme.spacing.xl * 1.5,
         })}
       >
-        <RankingTable title="Ranking general" data={data} />
+        <RankingTable title="Ranking general" data={data} withMedals />
         <SimpleGrid
           mt={100}
           cols={2}
