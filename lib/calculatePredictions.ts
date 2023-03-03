@@ -1,7 +1,7 @@
 import { RaceTable, Result } from 'interfaces/raceResults'
 import {
   ReglaCarrerasPuntajeDoble,
-  ReglaPuntajeAbandono,
+  ReglaPuntajeAbandono
 } from 'interfaces/rulesParameters'
 import { Predictions } from 'interfaces/userPredictions'
 import {
@@ -12,7 +12,7 @@ import {
   getPenalidadAbandonos,
   getPilotosAbandonoResults,
   getPointsAciertos,
-  getPointsAciertosByOrder,
+  getPointsAciertosByOrder
 } from './calculatePredictionsLogic'
 
 function calculatePredictions(
@@ -20,7 +20,7 @@ function calculatePredictions(
   respuestaAPI: RaceTable
 ) {
   const carrera = getCarreraApiByPrediction(predictions, respuestaAPI)
-
+  
   if (!carrera) {
     const msjError =
       'No se encontró la carrera especificada en la respuesta de la API'
@@ -100,14 +100,14 @@ const logResults = (
   console.log('Race total Laps: ', raceTotalLaps)
 
   console.table([
-    ['Aciertos', aciertos],
-    ['Aciertos Orden', aciertosOrden],
-    ['Total Puntos Acierto Y Orden', aciertosMasOrden],
-    ['Puntos Abandonos', abandonos],
-    ['Total Mult. Abandonos', multiplicadorAbandono],
-    ['Total Puntos Abandonos', abandonos],
-    ['Total Penal. Abandonos', abandonos * multiplicadorAbandono],
-    ['Total de los Totales', total],
+    ["Aciertos", aciertos],
+    ["Aciertos Orden", aciertosOrden],
+    ["Total Puntos Acierto Y Orden", aciertosMasOrden],
+    ["Puntos Abandonos", abandonos],
+    ["Total Mult. Abandonos", multiplicadorAbandono],
+    ["Total Puntos Abandonos", abandonos * multiplicadorAbandono],
+    ["Total Penal. Abandonos", penalidadAbandonos],
+    ["Total de los Totales", total]
   ])
 }
 
