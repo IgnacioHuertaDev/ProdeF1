@@ -75,33 +75,51 @@ const ProdeForm = ({
     getFormValues()
   }, [])
 
+  const validatePrediction = (
+    topDrivers: { posicion: number; pilotoId: string }[],
+    dropouts: string[]
+  ) => {
+    const topDriversArray = topDrivers.map((driver) => driver.pilotoId)
+
+    const allDrivers = topDriversArray.concat(dropouts)
+
+    return !(allDrivers.length !== new Set(allDrivers).size)
+  }
+
   const savePredictionUser = async () => {
     if (dayjs() <= qualifyDate) {
-      await axios
-        .post(
-          '/api/savePrediction',
-          {
-            userName: session?.user?.name,
-            raceId: carreraId,
-            topDrivers: form.values.drivers,
-            dropouts: form.values.dropouts,
-          },
-          {
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
+      if (validatePrediction(form.values.drivers, form.values.dropouts)) {
+        await axios
+          .post(
+            '/api/savePrediction',
+            {
+              userName: session?.user?.name,
+              raceId: carreraId,
+              topDrivers: form.values.drivers,
+              dropouts: form.values.dropouts,
             },
-          }
-        )
-        .then(() => {
-          showSuccessMessage(
-            'Prediccion guardada',
-            'Su prediccion ha sido guardada con exito, puede seguir modificandola hasta antes del comienzo de la claisificación.'
+            {
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+            }
           )
-        })
-        .catch((error) => {
-          showDangerMessage('Prediccion anulada, intente nuevamente', error)
-        })
+          .then(() => {
+            showSuccessMessage(
+              'Prediccion guardada',
+              'Su prediccion ha sido guardada con exito, puede seguir modificandola hasta antes del comienzo de la claisificación.'
+            )
+          })
+          .catch((error) => {
+            showDangerMessage('Prediccion anulada, intente nuevamente', error)
+          })
+      } else {
+        showDangerMessage(
+          'Error al guardar',
+          'Tiene pilotos repetidos en sus predicciones'
+        )
+      }
     } else {
       showDangerMessage(
         'Error al guardar',
