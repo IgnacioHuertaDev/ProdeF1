@@ -1,6 +1,6 @@
 {
-  "theme_color": "#1a1b1e",
-  "background_color": "#fff",
+  "theme_color": "#fff",
+  "background_color": "#1a1b1e",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
@@ -8,6 +8,16 @@
   "short_name": "Prode F1",
   "description": "Prode F1",
   "icons": [
+    {
+      "src": "icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
     {
       "src": "icons/icon-128x128.png",
       "sizes": "128x128",
