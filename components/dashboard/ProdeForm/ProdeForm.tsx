@@ -38,10 +38,9 @@ const ProdeForm = ({
   const loading = status === 'loading'
   const carreraId = raceId != undefined ? raceId : 'NORACE'
 
-  // const { drivers, isLoading, isError, isLoadingSlow } = useGetDrivers(
-  //   dashboardConfig.currentYear
-  // )
-  const { drivers, isLoading, isError, isLoadingSlow } = useGetDrivers(2022)
+  const { drivers, isLoading, isError, isLoadingSlow } = useGetDrivers(
+    dashboardConfig.currentYear
+  )
   const [isLoadingProde, setIsLoadingProde] = useState(true)
 
   const form = useForm({
