@@ -28,11 +28,6 @@ export default async function handler(
       console.log(usersPredictions)
 
       usersPredictions.map(async (userPredictions) => {
-        const points = calculatePredictions(
-          userPredictions.predictions[0],
-          raceResultsResponse
-        )
-
         //Se busca el usuario a modificar
         const userPredictionsModel: IUserPredictions | null =
           await UserPredictions.findOne({
@@ -51,6 +46,11 @@ export default async function handler(
           )
 
           if (existingPredictionIndex >= 0 && existingPrediction) {
+            const points = calculatePredictions(
+              existingPrediction,
+              raceResultsResponse
+            )
+
             existingPrediction.puntaje = points
             // Se actualiza la predicción existente
             await UserPredictions.updateOne(
