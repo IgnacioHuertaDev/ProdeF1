@@ -14,7 +14,8 @@ import DropoutsDriversPicker from 'components/dashboard/DropoutsDriversPicker'
 import TopDriversPicker from 'components/dashboard/TopDriversPicker'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
+import useCurrentDate from 'hooks/useCurrentDate'
 import useGetDrivers from 'hooks/useGetDrivers'
 import getProdeByRaceYearUser from 'lib/getProdeByRaceYearUser'
 import { useSession } from 'next-auth/react'
@@ -34,6 +35,7 @@ const ProdeForm = ({
   qualifyDate,
 }: ProdeFormProps) => {
   const { data: session, status } = useSession()
+  const { actualDate } = useCurrentDate()
 
   const loading = status === 'loading'
   const carreraId = raceId != undefined ? raceId : 'NORACE'
@@ -74,6 +76,11 @@ const ProdeForm = ({
     getFormValues()
   }, [])
 
+  // When rendering client side don't display anything until loading is complete
+  if (typeof window !== 'undefined' && loading) return null
+
+  if (actualDate == null) return null
+
   const validatePrediction = (
     topDrivers: { posicion: number; pilotoId: string }[],
     dropouts: string[]
@@ -86,7 +93,7 @@ const ProdeForm = ({
   }
 
   const savePredictionUser = async () => {
-    if (dayjs() <= qualifyDate) {
+    if (actualDate <= qualifyDate) {
       if (validatePrediction(form.values.drivers, form.values.dropouts)) {
         await axios
           .post(
@@ -130,9 +137,6 @@ const ProdeForm = ({
   const hidden: CSSObject = {
     display: 'none',
   }
-
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== 'undefined' && loading) return null
 
   if (isError)
     return (

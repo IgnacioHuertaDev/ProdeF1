@@ -18,6 +18,7 @@ import RulesModal from 'components/dashboard/RulesModal'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs from 'dayjs'
+import useCurrentDate from 'hooks/useCurrentDate'
 import useGetSchedule from 'hooks/useGetSchedule'
 import { Race } from 'interfaces/schedule'
 import DashboardLayout from 'layouts/DashboardLayout'
@@ -60,6 +61,7 @@ const Prode = () => {
 
   const { classes } = useStyles()
   const { status } = useSession()
+  const { actualDate } = useCurrentDate()
   const [opened, { open, close }] = useDisclosure(false)
 
   const loading = status === 'loading'
@@ -71,6 +73,8 @@ const Prode = () => {
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null
 
+  if (actualDate == null) return null
+
   const hidden: CSSObject = {
     display: 'none',
   }
@@ -78,7 +82,7 @@ const Prode = () => {
   if (isError)
     return <ErrorMessage message="Ha ocurrido un error al obtener el prode" />
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <>
         <Center>
@@ -97,6 +101,7 @@ const Prode = () => {
         )}
       </>
     )
+  }
 
   let races: Race[] | null = null
 
@@ -107,7 +112,7 @@ const Prode = () => {
   let carreraActual: Race[] = []
 
   if (races) {
-    carreraActual = races.filter((race) => dayjs(race.date) > dayjs())
+    carreraActual = races.filter((race) => dayjs(race.date) > actualDate)
   }
 
   const ActualRace = () => {
@@ -151,13 +156,13 @@ const Prode = () => {
 
           <Text size="sm" className={classes.value} mt={20}>
             {`Tiempo restante: ${
-              dayjs() <
+              actualDate <
               dayjs(
                 `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
                 formatoFecha
               ).subtract(3, 'hours')
                 ? capitalizeFirstLetter(
-                    dayjs().to(
+                    actualDate.to(
                       dayjs(
                         `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
                         formatoFecha
@@ -190,20 +195,22 @@ const Prode = () => {
             Reglamento
           </Button>
           <RulesModal opened={opened} onClose={close} />
-          <ProdeForm
-            raceId={carreraActual[0]?.Circuit.circuitId}
-            disableSaveButton={
-              dayjs() >=
-              dayjs(
+          {actualDate && (
+            <ProdeForm
+              raceId={carreraActual[0]?.Circuit.circuitId}
+              disableSaveButton={
+                actualDate >=
+                dayjs(
+                  `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
+                  formatoFecha
+                ).subtract(3, 'hours')
+              }
+              qualifyDate={dayjs(
                 `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
                 formatoFecha
-              ).subtract(3, 'hours')
-            }
-            qualifyDate={dayjs(
-              `${carreraActual[0].Qualifying.date}/${carreraActual[0].Qualifying.time}`,
-              formatoFecha
-            ).subtract(3, 'hours')}
-          />
+              ).subtract(3, 'hours')}
+            />
+          )}
         </div>
       </Box>
     </>

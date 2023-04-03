@@ -3,6 +3,7 @@ import RaceInfo from 'components/dashboard/RaceInfo'
 import ErrorMessage from 'components/shared/ErrorMessage'
 import dashboardConfig from 'dashboardConfig'
 import dayjs from 'dayjs'
+import useCurrentDate from 'hooks/useCurrentDate'
 import useGetSchedule from 'hooks/useGetSchedule'
 import { Race } from 'interfaces/schedule'
 import DashboardLayout from 'layouts/DashboardLayout'
@@ -13,6 +14,7 @@ import capitalizeFirstLetter from 'utils/capitalizeFirstLetter'
 const Calendar = () => {
   const formatoFecha = 'YYYY-MM-DD/HH:mm:ss[Z]' // formato reconocido por Dayjs
   const { status } = useSession()
+  const { actualDate } = useCurrentDate()
   const loading = status === 'loading'
 
   const { schedule, isLoading, isError, isLoadingSlow } = useGetSchedule(
@@ -21,6 +23,8 @@ const Calendar = () => {
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined' && loading) return null
+
+  if (actualDate == null) return null
 
   if (isError)
     return (
@@ -78,8 +82,11 @@ const Calendar = () => {
       </tr>
     ))
 
-    const carreraAnterior = races.filter((race) => dayjs(race.date) <= dayjs())
-    const carreraProxima = races.filter((race) => dayjs(race.date) > dayjs())
+    const carreraAnterior = races
+      .filter((race) => dayjs(race.date) <= actualDate)
+      .reverse()
+
+    const carreraProxima = races.filter((race) => dayjs(race.date) > actualDate)
 
     if (carreraAnterior.length != 0) {
       data.push({
