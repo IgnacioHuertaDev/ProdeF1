@@ -44,10 +44,8 @@
 //   // },
 // }
 
-const withTranslate = require('next-translate')
-
-module.exports = withTranslate({
+module.exports = {
   reactStrictMode: false,
   swcMinify: true,
   poweredByHeader: false,
-})
+}

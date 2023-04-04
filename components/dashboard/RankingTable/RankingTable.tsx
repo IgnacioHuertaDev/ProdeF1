@@ -1,5 +1,6 @@
 import { Center, Table, Title } from '@mantine/core'
 import Image from 'next/image'
+import Link from 'next/link'
 import BronzeMedal from 'public/assets/bronzeMedal.png'
 import GoldMedal from 'public/assets/goldMedal.png'
 import SilverMedal from 'public/assets/silverMedal.png'
@@ -56,9 +57,10 @@ export default function RankingTable({
                 alt="Bronze medal"
               />
             ) : null}
-            {/* : null} */}
           </td>
-          <td>{item.name}</td>
+          <td>
+            <Link href={`profile/${item.name}`}>{item.name}</Link>
+          </td>
           <td>{item.points}</td>
         </tr>
       )

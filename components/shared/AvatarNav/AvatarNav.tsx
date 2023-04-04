@@ -94,7 +94,7 @@ export default function AvatarNav() {
         <Menu.Dropdown>
           <Menu.Item
             component={NextLink}
-            href="/profile"
+            href={`/profile/${session!.user!.name!}`}
             icon={<BsFillPersonFill size={14} />}
           >
             Mis datos

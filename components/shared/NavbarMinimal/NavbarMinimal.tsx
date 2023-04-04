@@ -16,8 +16,6 @@ import {
   Icon,
   Login,
   Logout,
-  MoonStars,
-  Sun,
   Ticket,
 } from 'tabler-icons-react'
 
@@ -170,11 +168,6 @@ const NavbarMinimal = ({ opened, setOpened }: NavbarMinimalProps) => {
       </Navbar.Section>
       <Navbar.Section mb={120}>
         <Group align="center" spacing={0}>
-          <NavbarButton
-            icon={colorScheme === 'dark' ? Sun : MoonStars}
-            label="Change theme"
-            onClick={() => toggleColorScheme()}
-          />
           {!session && (
             <NavbarButton
               icon={Login}
