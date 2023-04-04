@@ -46,6 +46,6 @@
 
 module.exports = {
   reactStrictMode: false,
-  swcMinify: true,
+  swcMinify: false,
   poweredByHeader: false,
 }
